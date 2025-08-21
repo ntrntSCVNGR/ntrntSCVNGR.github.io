@@ -1,0 +1,1863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akram Saeed - Windows XP Interactive Desktop</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter for readability, Press Start 2P for retro pixel impact -->
+    <!-- Added Doto and Style Script for new typography options -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Press+Start+2P&family=Doto&family=Style+Script&display=swap" rel="stylesheet">
+    <style>
+        /* Windows XP Monochromatic Palette */
+        :root {
+            --xp-bg-main: #F0EAD6; /* Sand Pearl White */
+            --xp-bg-window: #ECE9D8; /* XP default window gray */
+            --xp-text: #36454F; /* Charcoal Gun Black */
+            --xp-border-lightest: #FFFFFF; /* Pure White, for top/left window borders */
+            --xp-border-light: #C0C0C0; /* Light Gray, for subtle details */
+            --xp-border-dark: #808080; /* Medium Gray, for bottom/right window borders */
+            --xp-border-darker: #4A4A4F; /* Darker Gray, for deep accents */
+            --xp-titlebar-bg-top: #555555; /* Dark gray for title bar top */
+            --xp-titlebar-bg-bottom: #333333; /* Darker gray for title bar bottom */
+            --xp-titlebar-text: #FFFFFF; /* White text for title bar */
+            --xp-button-bg: #C0C0C0; /* Standard button gray */
+            --xp-button-hover: #D0D0D0; /* Button hover hover */
+            --xp-button-border-light: #FFFFFF; /* Button border light */
+            --xp-button-border-dark: #808080; /* Button border dark */
+            --xp-button-close-bg: #E00000; /* Red for close button */
+            --xp-button-close-hover: #FF3333; /* Red hover for close button */
+            
+            /* New Windows XP-inspired colors for contrast */
+            --xp-blue: #316AC5; /* Classic Windows XP blue for primary accents */
+            --xp-green: #4CAF50; /* A lively green for secondary accents or highlights */
+        }
+
+        /* Base styles for a stark, monochromatic background and Inter font */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--xp-bg-main);
+            color: var(--xp-text);
+            overflow: hidden; /* Hide overflow to prevent scrollbars from desktop background */
+            padding: 0;
+            margin: 0;
+            line-height: 1.5;
+            /* Padding on the left to make space for the taskbar */
+            padding-left: 180px;
+            height: 100vh; /* Ensure body takes full viewport height */
+            display: flex; /* Use flexbox to manage taskbar and desktop area */
+            word-wrap: break-word; /* Global word wrap for readability */
+            overflow-wrap: break-word; /* Modern equivalent */
+        }
+
+        /* Common window frame styling */
+        .window-frame {
+            background-color: var(--xp-bg-window);
+            border-top: 2px solid var(--xp-border-lightest);
+            border-left: 2px solid var(--xp-border-lightest);
+            border-right: 2px solid var(--xp-border-dark);
+            border-bottom: 2px solid var(--xp-border-dark);
+            /* No box-shadow for flat design */
+            position: relative; /* Needed for z-index management */
+        }
+
+        /* Title bar styles */
+        .window-title-bar {
+            height: 26px; /* Standard XP title bar height */
+            background: linear-gradient(to bottom, var(--xp-titlebar-bg-top), var(--xp-titlebar-bg-bottom));
+            border-bottom: 1px solid var(--xp-border-darker);
+            padding: 0 4px; /* Padding for controls */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-family: 'Inter', sans-serif; /* Keep Inter for title bar text */
+            font-size: 0.85rem;
+            color: var(--xp-titlebar-text);
+            cursor: default; /* Indicate not draggable */
+            white-space: nowrap; /* Prevent title wrap */
+            overflow: hidden; /* Hide overflow title */
+            text-overflow: ellipsis; /* Add ellipsis if title is too long */
+        }
+
+        /* Small title bar for content cards */
+        .window-title-bar-small {
+            height: 20px; /* Smaller height for sub-windows */
+            font-size: 0.75rem;
+        }
+
+        /* Window control buttons */
+        .window-controls {
+            display: flex;
+            gap: 2px;
+        }
+
+        .window-control-button {
+            width: 18px;
+            height: 16px;
+            background-color: var(--xp-button-bg);
+            border-top: 1px solid var(--xp-button-border-light);
+            border-left: 1px solid var(--xp-button-border-light);
+            border-right: 1px solid var(--xp-button-border-dark);
+            border-bottom: 1px solid var(--xp-button-border-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Marlett', sans-serif; /* Windows system font for symbols (if available) */
+            font-size: 0.8rem;
+            color: var(--xp-text);
+            cursor: pointer; /* Now clickable */
+        }
+        .window-control-button:hover {
+            background-color: var(--xp-button-hover);
+            border-top: 1px solid var(--xp-button-border-dark); /* Invert borders on hover */
+            border-left: 1px solid var(--xp-button-border-dark);
+            border-right: 1px solid var(--xp-button-border-light);
+            border-bottom: 1px solid var(--xp-button-border-light);
+        }
+        .window-control-button.close-btn {
+            background-color: var(--xp-button-close-bg);
+            color: var(--xp-titlebar-text); /* White X */
+        }
+        .window-control-button.close-btn:hover {
+            background-color: var(--xp-button-close-hover);
+            border-top: 1px solid var(--xp-button-border-dark); /* Invert borders on hover */
+            border-left: 1px solid var(--xp-button-border-dark);
+            border-right: 1px solid var(--xp-button-border-light);
+            border-bottom: 1px solid var(--xp-button-border-light);
+        }
+
+        /* Primary heading with Doto font and new XP Blue color */
+        .primary-heading {
+            font-family: 'Doto', cursive; /* Changed to Doto */
+            color: var(--xp-blue); 
+            letter-spacing: 0.2em;
+        }
+
+        /* Section headers with Doto font and new XP Blue color */
+        .section-header {
+            position: relative;
+            padding-bottom: 1.25rem;
+            margin-top: 2rem; /* Adjust for title bar */
+            margin-bottom: 3rem;
+            font-weight: 900;
+            color: var(--xp-blue); 
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-family: 'Doto', cursive; /* Changed to Doto */
+        }
+        .section-header::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100px;
+            height: 8px;
+            background: var(--xp-border-darker);
+        }
+
+        /* Subheadings with pixel font - keeping original color for subtle contrast */
+        .sub-heading {
+            font-family: 'Press Start 2P', cursive; /* Kept Press Start 2P for subheadings */
+            font-size: 1.25rem; /* Slightly smaller default */
+            letter-spacing: 0.05em;
+            color: var(--xp-text); /* Keeping subheadings in charcoal for contrast */
+            margin-bottom: 1rem;
+            line-height: 1.3; /* Ensure good spacing for pixel font */
+        }
+
+        /* Skill tags: monochromatic buttons */
+        .skill-tag {
+            background-color: var(--xp-button-bg);
+            border-top: 1px solid var(--xp-button-border-light);
+            border-left: 1px solid var(--xp-button-border-light);
+            border-right: 1px solid var(--xp-button-border-dark);
+            border-bottom: 1px solid var(--xp-button-border-dark);
+            color: var(--xp-text);
+            font-weight: 600;
+            padding: 0.6rem 1rem;
+            margin: 0.25rem; /* Reduced margin to pack closer in new layout */
+            transition: all 0.1s ease-out;
+            white-space: nowrap; /* Keep skills on one line for better tag appearance */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block; /* Essential for margins and padding */
+        }
+        .skill-tag:hover {
+            background-color: var(--xp-button-hover);
+            border-top: 1px solid var(--xp-button-border-dark);
+            border-left: 1px solid var(--xp-button-border-dark);
+            border-right: 1px solid var(--xp-button-border-light);
+            border-bottom: 1px solid var(--xp-button-border-light);
+            transform: translate(1px, 1px);
+        }
+
+        /* Content padding for inner window content */
+        .window-content-inner {
+            padding: 1.5rem 2rem; /* Consistent inner padding */
+            overflow-y: auto; /* Enable scrolling for content if it overflows */
+            flex-grow: 1; /* Allow content to grow within the flex column */
+        }
+        
+        /* Specific content paddings for summary and cards */
+        .summary-content {
+            padding: 3rem;
+            text-align: center;
+            line-height: 1.7;
+        }
+
+        .card-content {
+            padding: 1.5rem; /* Ensure generous padding inside nested cards */
+        }
+
+        /* Decorative elements for list items (static) */
+        .list-item-deco::before {
+            content: "█";
+            color: var(--xp-border-darker);
+            display: inline-block;
+            width: 1.4em;
+            margin-left: -1.4em;
+            vertical-align: middle;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1em;
+        }
+
+        /* Links with monochromatic styling */
+        a {
+            color: var(--xp-text);
+            text-decoration: none;
+            font-weight: 700;
+        }
+        a:hover {
+            color: var(--xp-border-darker);
+            text-decoration: underline;
+        }
+
+        /* Declaration as a code block feel */
+        .declaration-text {
+            border-top: 1px solid var(--xp-border-dark);
+            padding-top: 1.5rem;
+            margin-top: 2rem;
+            font-family: 'Courier New', Courier, monospace;
+            letter-spacing: 0.1em;
+            color: var(--xp-border-dark);
+        }
+
+        /* Small button-like spans for contact info */
+        .contact-info-button {
+            background-color: var(--xp-button-bg);
+            border-top: 1px solid var(--xp-button-border-light);
+            border-left: 1px solid var(--xp-button-border-light);
+            border-right: 1px solid var(--xp-button-border-dark);
+            border-bottom: 1px solid var(--xp-button-border-dark);
+            padding: 0.5rem 1rem;
+            display: inline-block; /* To allow padding/margins */
+            margin-right: 0.5rem; /* Spacing between them */
+            transition: all 0.1s ease-out;
+            color: var(--xp-text);
+            font-weight: 600;
+            white-space: nowrap; /* Keep text on one line */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%; /* Ensure it doesn't overflow its parent */
+        }
+        .contact-info-button:hover {
+            background-color: var(--xp-button-hover);
+            border-top: 1px solid var(--xp-button-border-dark);
+            border-left: 1px solid var(--xp-button-border-dark);
+            border-right: 1px solid var(--xp-button-border-light);
+            border-bottom: 1px solid var(--xp-button-border-light);
+            transform: translate(1px, 1px);
+        }
+        .contact-info-p { /* Parent of contact buttons to manage their layout */
+            display: flex;
+            flex-wrap: wrap; /* Allow buttons to wrap if needed */
+            justify-content: center; /* Center them */
+            gap: 0.5rem; /* Space between buttons */
+        }
+
+        /* New style for text box wireframes */
+        .xp-data-field {
+            background-color: var(--xp-bg-main); /* Slightly lighter background to differentiate */
+            border-top: 1px solid var(--xp-border-dark);
+            border-left: 1px solid var(--xp-border-dark);
+            border-right: 1px solid var(--xp-border-lightest);
+            border-bottom: 1px solid var(--xp-border-lightest);
+            padding: 0.5rem 0.75rem;
+            margin-bottom: 0.75rem; /* Space below each data field */
+            color: var(--xp-text);
+            font-size: 0.9rem;
+            line-height: 1.3; /* Ensure readability within the box */
+            box-sizing: border-box; /* Include padding and border in the element's total width and height */
+            display: block; /* Make it a block element to take full width and apply margins */
+        }
+
+        /* New class for Style Script highlights with XP Green color */
+        .xp-highlight-script {
+            font-family: 'Style Script', cursive;
+            font-weight: normal; /* Script fonts don't typically use bolding */
+            font-size: 1.1em; /* Slightly larger than surrounding text */
+            color: var(--xp-green); /* Using green for a distinct highlight */
+            padding: 0 0.2em; /* Small padding to make it stand out */
+        }
+
+
+        /* --- Taskbar and Floating Window Styles --- */
+        .taskbar-container {
+            position: fixed; /* Fixed position for the taskbar */
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 180px; /* Width of the taskbar */
+            background-color: var(--xp-bg-window);
+            /* Standard XP window frame borders for the taskbar itself */
+            border-right: 2px solid var(--xp-border-dark);
+            border-top: 2px solid var(--xp-border-lightest);
+            border-left: 2px solid var(--xp-border-lightest);
+            border-bottom: 2px solid var(--xp-border-dark);
+            padding: 10px 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px; /* Space between taskbar buttons */
+            z-index: 1000; /* High z-index to stay on top */
+            flex-shrink: 0; /* Prevent taskbar from shrinking */
+        }
+
+        .taskbar-button {
+            width: 100%;
+            height: 30px; /* Height of taskbar buttons */
+            background-color: var(--xp-button-bg);
+            border-top: 1px solid var(--xp-button-border-light);
+            border-left: 1px solid var(--xp-button-border-light);
+            border-right: 1px solid var(--xp-button-border-dark);
+            border-bottom: 1px solid var(--xp-button-border-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Center icon/text */
+            padding: 0 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            color: var(--xp-text);
+            cursor: pointer;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: all 0.1s ease-out;
+            /* Remove explicit flex-start as we want center for icons, but allow text to grow */
+        }
+        .taskbar-button:hover, .taskbar-button.active {
+            background-color: var(--xp-button-hover);
+            border-top: 1px solid var(--xp-button-border-dark);
+            border-left: 1px solid var(--xp-button-border-dark);
+            border-right: 1px solid var(--xp-button-border-light);
+            border-bottom: 1px solid var(--xp-button-border-light);
+        }
+        .taskbar-button.active {
+            background-color: var(--xp-border-dark); /* Darker when active/open */
+            color: var(--xp-titlebar-text); /* White text when active */
+        }
+        .taskbar-button svg {
+            width: 20px; /* Adjust SVG icon size */
+            height: 20px;
+            fill: currentColor; /* Inherit color from parent button */
+            stroke: currentColor; /* For outlines if any */
+            stroke-width: 1px;
+        }
+        .taskbar-button span { /* For text within button, if mixed with icon */
+            flex-grow: 1; /* Allow text to take available space */
+            text-align: left; /* Align text to the left */
+            margin-left: 8px; /* Space between icon and text */
+        }
+
+        /* Desktop Area - This is the main content area to the right of the taskbar */
+        .desktop-area {
+            flex-grow: 1; /* Take remaining space */
+            background-color: var(--xp-bg-main); /* Explicitly set desktop background */
+            position: relative; /* For positioning floating windows */
+            padding: 20px; /* Padding for the desktop icons/layout */
+            min-height: 100vh; /* Ensure it takes full viewport height */
+        }
+
+        /* Floating Window Styling */
+        .floating-window {
+            position: absolute; /* Absolute position within desktop-area */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* Center the window */
+            z-index: 100; /* Base z-index for floating windows */
+            width: 600px; /* Default width */
+            min-width: 400px; /* Increased Minimum width to prevent excessive squishing */
+            max-width: 90%; /* Max width relative to parent desktop-area */
+            height: auto; /* Auto height based on content */
+            min-height: 300px; /* Increased Minimum height to prevent excessive squishing */
+            max-height: calc(100vh - 40px);
+            display: none; 
+            flex-direction: column; /* For content layout */
+            transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+            opacity: 0;
+            visibility: hidden;
+        }
+        .floating-window.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* Styles for the new skills category tabs */
+        .skills-category-tabs {
+            display: flex;
+            gap: 5px; /* Space between tab buttons */
+            margin-bottom: 1.5rem; /* Space below tabs before content */
+            border-bottom: 1px solid var(--xp-border-dark); /* Subtle separator */
+            padding-bottom: 5px;
+            flex-wrap: wrap; /* Allow tabs to wrap on smaller screens */
+        }
+
+        .skills-category-tab-button {
+            background-color: var(--xp-button-bg);
+            border-top: 1px solid var(--xp-button-border-light);
+            border-left: 1px solid var(--xp-button-border-light);
+            border-right: 1px solid var(--xp-button-border-dark);
+            border-bottom: 1px solid var(--xp-button-border-dark);
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            color: var(--xp-text);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.1s ease-out;
+            flex-grow: 1; /* Allow buttons to expand */
+            text-align: center;
+        }
+
+        .skills-category-tab-button:hover {
+            background-color: var(--xp-button-hover);
+            border-top: 1px solid var(--xp-button-border-dark);
+            border-left: 1px solid var(--xp-button-border-dark);
+            border-right: 1px solid var(--xp-button-border-light);
+            border-bottom: 1px solid var(--xp-button-border-light);
+        }
+
+        .skills-category-tab-button.active-tab {
+            background-color: var(--xp-border-darker); /* Darker when active */
+            color: var(--xp-titlebar-text); /* White text for active tab */
+            border-top: 1px solid var(--xp-button-border-dark); /* Invert borders for active */
+            border-left: 1px solid var(--xp-button-border-dark);
+            border-right: 1px solid var(--xp-button-border-light);
+            border-bottom: 1px solid var(--xp-button-border-light);
+            transform: translate(1px, 1px); /* Slight pressed effect */
+        }
+
+        /* Individual skill content sections, initially hidden */
+        .skills-content-section {
+            display: none; /* Controlled by JS */
+            flex-direction: column; /* For proper internal layout */
+        }
+        .skills-content-section.show-skills {
+            display: flex; /* Show using flexbox */
+        }
+
+        /* Styles for the new projects accordion */
+        .project-accordion-item {
+            margin-bottom: 1rem; /* Space between accordion items */
+            border: 1px solid var(--xp-border-dark); /* Subtle border for each item */
+        }
+
+        .project-accordion-header {
+            width: 100%;
+            background-color: var(--xp-button-bg);
+            border-top: 1px solid var(--xp-button-border-light);
+            border-left: 1px solid var(--xp-button-border-light);
+            border-right: 1px solid var(--xp-button-border-dark);
+            border-bottom: 1px solid var(--xp-button-border-dark);
+            padding: 0.75rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--xp-text);
+            transition: all 0.1s ease-out;
+        }
+
+        .project-accordion-header:hover {
+            background-color: var(--xp-button-hover);
+            border-top: 1px solid var(--xp-button-border-dark);
+            border-left: 1px solid var(--xp-button-border-dark);
+            border-right: 1px solid var(--xp-button-border-light);
+            border-bottom: 1px solid var(--xp-button-border-light);
+        }
+
+        .project-accordion-header.active .accordion-icon {
+            transform: rotate(45deg); /* Rotate for plus to X */
+        }
+
+        .accordion-icon {
+            font-size: 1.2rem;
+            line-height: 1;
+            transition: transform 0.2s ease-out;
+        }
+
+        .project-accordion-content {
+            background-color: var(--xp-bg-main); /* Content background, slightly different */
+            padding: 0 1.5rem; /* No top/bottom padding initially */
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease-out; /* Smooth transition */
+        }
+
+        .project-accordion-content.open {
+            max-height: 500px; /* Arbitrary large number to allow full content */
+            padding: 1rem 1.5rem; /* Apply padding when open */
+            border-top: 1px solid var(--xp-border-dark); /* Separator from header */
+        }
+
+        /* Ensure pixel font in accordion header is sized correctly */
+        .project-accordion-header .sub-heading {
+            font-size: 1rem; /* Adjust as needed for headers */
+            margin-bottom: 0; /* Remove default margin from sub-heading class */
+        }
+
+        /* Styles for the new Artworks Grid */
+        .artwork-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Responsive grid columns */
+            gap: 1rem; /* Space between artwork cards */
+            padding-top: 1rem;
+            /* Hide by default, controlled by JS */
+            display: none;
+        }
+        .artwork-grid.show-artwork-category {
+            display: grid; /* Show when active */
+        }
+
+        .artwork-card {
+            background-color: var(--xp-button-bg);
+            border-top: 1px solid var(--xp-button-border-light);
+            border-left: 1px solid var(--xp-button-border-light);
+            border-right: 1px solid var(--xp-button-border-dark);
+            border-bottom: 1px solid var(--xp-button-border-dark);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 0.75rem;
+            cursor: pointer;
+            transition: all 0.1s ease-out;
+            box-sizing: border-box;
+        }
+
+        .artwork-card:hover {
+            background-color: var(--xp-button-hover);
+            border-top: 1px solid var(--xp-button-border-dark);
+            border-left: 1px solid var(--xp-button-border-dark);
+            border-right: 1px solid var(--xp-button-border-light);
+            border-bottom: 1px solid var(--xp-button-border-light);
+            transform: translate(1px, 1px);
+        }
+
+        .artwork-card img, .artwork-card svg {
+            width: 100%;
+            height: auto;
+            max-height: 120px;
+            object-fit: contain;
+            margin-bottom: 0.5rem;
+            border: 1px solid var(--xp-border-dark);
+            display: block;
+        }
+
+        .artwork-card .artwork-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--xp-text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+        }
+
+        /* Styles for the new Artwork Viewer Window */
+        .artwork-viewer-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+
+        .artwork-viewer-content img, .artwork-viewer-content svg, .artwork-viewer-content video {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            display: block;
+            border: 1px solid var(--xp-border-darker);
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            body {
+                padding-left: 0;
+                padding-bottom: 50px;
+                flex-direction: column;
+            }
+            .taskbar-container {
+                width: 100%;
+                height: 50px;
+                top: auto;
+                bottom: 0;
+                left: 0;
+                flex-direction: row;
+                justify-content: space-around;
+                padding: 5px;
+                border-right: none;
+                border-top: 2px solid var(--xp-border-dark);
+                border-left: 2px solid var(--xp-border-lightest);
+                border-bottom: 2px solid var(--xp-border-dark);
+            }
+            .taskbar-button {
+                width: auto;
+                flex-grow: 1;
+                font-size: 0.7rem;
+            }
+            .desktop-area {
+                padding: 10px;
+                min-height: calc(100vh - 50px);
+            }
+            .floating-window {
+                max-width: calc(100% - 20px);
+                width: 90%;
+                top: 45%;
+                left: 50%;
+                max-height: calc(100vh - 70px);
+                min-width: 300px;
+                min-height: 250px;
+            }
+            .primary-heading {
+                font-size: 2.5rem;
+                letter-spacing: 0.1em;
+            }
+            .section-header {
+                font-size: 1.5rem;
+                margin-bottom: 1.5rem;
+                padding-bottom: 0.8rem;
+            }
+            .section-header::after {
+                width: 60px;
+                height: 5px;
+            }
+            .sub-heading {
+                font-size: 0.95rem;
+            }
+            .window-frame {
+                border-width: 1px;
+            }
+            .window-title-bar {
+                height: 20px;
+                font-size: 0.7rem;
+            }
+            .window-control-button {
+                width: 14px;
+                height: 12px;
+                font-size: 0.6rem;
+            }
+            .summary-content, .card-content, .window-content-inner {
+                padding: 0.8rem 1rem;
+            }
+            .skill-tag {
+                padding: 0.3rem 0.6rem;
+                margin: 0.15rem;
+                font-size: 0.65rem;
+            }
+            .list-item-deco::before {
+                width: 0.8em;
+                margin-left: -0.8em;
+                font-size: 0.8em;
+            }
+            .contact-info-button {
+                padding: 0.2rem 0.5rem;
+                font-size: 0.7rem;
+            }
+            .skills-category-tab-button {
+                font-size: 0.75rem;
+                padding: 0.3rem 0.7rem;
+            }
+            .project-accordion-header .sub-heading {
+                font-size: 0.85rem;
+            }
+            .artwork-grid {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+                gap: 0.75rem;
+            }
+            .artwork-card img, .artwork-card svg {
+                max-height: 80px;
+            }
+            .artwork-card .artwork-title {
+                font-size: 0.7rem;
+            }
+            .artwork-viewer-content {
+                padding: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Taskbar Container (Left-docked) -->
+    <div class="taskbar-container">
+        <button class="taskbar-button" id="taskbar-akram-saeed" data-window-id="akram-saeed-window">
+            <svg viewBox="0 0 16 16">
+                <rect x="3" y="2" width="10" height="2" fill="currentColor"/>
+                <rect x="2" y="5" width="12" height="9" fill="currentColor"/>
+                <circle cx="8" cy="7" r="2" fill="var(--xp-bg-window)" stroke="currentColor" stroke-width="0.5"/>
+            </svg>
+        </button>
+        <button class="taskbar-button" id="taskbar-summary" data-window-id="summary-window">
+            <svg viewBox="0 0 16 16">
+                <rect x="3" y="2" width="10" height="12" fill="currentColor"/>
+                <line x1="5" y1="5" x2="11" y2="5" stroke="var(--xp-bg-window)" stroke-width="1"/>
+                <line x1="5" y1="7" x2="11" y2="7" stroke="var(--xp-bg-window)" stroke-width="1"/>
+                <line x1="5" y1="9" x2="9" y2="9" stroke="var(--xp-bg-window)" stroke-width="1"/>
+            </svg>
+        </button>
+        <button class="taskbar-button" id="taskbar-skills" data-window-id="skills-window">
+            <svg viewBox="0 0 16 16">
+                <circle cx="8" cy="8" r="5" fill="currentColor"/>
+                <rect x="7" y="1" width="2" height="3" fill="var(--xp-bg-main)"/>
+                <rect x="7" y="12" width="2" height="3" fill="var(--xp-bg-main)"/>
+                <rect x="12" y="7" width="3" height="2" fill="var(--xp-bg-main)"/>
+                <rect x="1" y="7" width="3" height="2" fill="var(--xp-bg-main)"/>
+                <rect x="10.5" y="3.5" width="2.5" height="2.5" transform="rotate(45 10.5 3.5)" fill="var(--xp-bg-main)"/>
+                <rect x="3" y="10.5" width="2.5" height="2.5" transform="rotate(45 3 10.5)" fill="var(--xp-bg-main)"/>
+                <rect x="3" y="3" width="2.5" height="2.5" transform="rotate(-45 3 3)" fill="var(--xp-bg-main)"/>
+                <rect x="10.5" y="10.5" width="2.5" height="2.5" transform="rotate(-45 10.5 10.5)" fill="var(--xp-bg-main)"/>
+            </svg>
+        </button>
+        <button class="taskbar-button" id="taskbar-education" data-window-id="education-window">
+            <svg viewBox="0 0 16 16">
+                <path d="M2 13 L2 5 L8 2 L14 5 L14 13 L8 16 Z" fill="currentColor"/>
+                <line x1="2" y1="5" x2="8" y2="8" stroke="var(--xp-bg-window)" stroke-width="1"/>
+                <line x1="8" y1="8" x2="14" y2="5" stroke="var(--xp-bg-window)" stroke-width="1"/>
+                <line x1="8" y1="8" x2="8" y2="16" stroke="var(--xp-bg-window)" stroke-width="1"/>
+            </svg>
+        </button>
+        <button class="taskbar-button" id="taskbar-projects" data-window-id="projects-window">
+            <svg viewBox="0 0 16 16">
+                <rect x="2" y="4" width="12" height="9" fill="currentColor"/>
+                <polygon points="2 4 4 2 12 2 14 4 14 4" fill="currentColor"/>
+                <line x1="3" y1="6" x2="13" y2="6" stroke="var(--xp-bg-window)" stroke-width="1"/>
+                <line x1="3" y1="8" x2="13" y2="8" stroke="var(--xp-bg-window)" stroke-width="1"/>
+            </svg>
+        </button>
+        <button class="taskbar-button" id="taskbar-gobeze" data-window-id="gobeze-window">
+            <svg viewBox="0 0 16 16">
+                <rect x="4" y="5" width="8" height="6" fill="currentColor"/>
+                <path d="M4 5 L2 5 L2 11 L4 11 Z" fill="currentColor"/>
+                <path d="M12 5 L14 5 L14 11 L12 11 Z" fill="currentColor"/>
+                <rect x="6" y="3" width="4" height="2" fill="currentColor"/>
+                <line x1="8" y1="11" x2="8" y2="13" stroke="var(--xp-bg-window)" stroke-width="1"/>
+            </svg>
+        </button>
+        <button class="taskbar-button" id="taskbar-cssc" data-window-id="cssc-window">
+            <svg viewBox="0 0 16 16">
+                <path d="M2 10 L8 2 L14 10 Z" fill="currentColor"/>
+                <rect x="4" y="10" width="8" height="2" fill="currentColor"/>
+                <rect x="5" y="12" width="6" height="2" fill="currentColor"/>
+            </svg>
+        </button>
+        <button class="taskbar-button" id="taskbar-durmaz" data-window-id="durmaz-window">
+            <svg viewBox="0 0 16 16">
+                <rect x="2" y="4" width="12" height="8" fill="currentColor"/>
+                <rect x="4" y="6" width="2" height="2" fill="var(--xp-bg-window)"/>
+                <rect x="7" y="6" width="2" height="2" fill="var(--xp-bg-window)"/>
+                <rect x="10" y="6" width="2" height="2" fill="var(--xp-bg-window)"/>
+                <rect x="4" y="9" width="8" height="2" fill="var(--xp-bg-window)"/>
+            </svg>
+        </button>
+        <button class="taskbar-button" id="taskbar-declaration" data-window-id="declaration-window">
+            <svg viewBox="0 0 16 16">
+                <path d="M4 8 L7 11 L12 5" stroke="currentColor" stroke-width="2" fill="none"/>
+                <rect x="2" y="2" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1"/>
+            </svg>
+        </button>
+        <button class="taskbar-button" id="taskbar-creative-nexus" data-window-id="artworks-window">
+            <svg viewBox="0 0 16 16">
+                <path d="M2 14 L4 12 L12 12 L14 14 Z" fill="currentColor"/>
+                <circle cx="10" cy="5" r="3" fill="currentColor"/>
+                <circle cx="6" cy="7" r="2" fill="currentColor"/>
+                <rect x="4" y="10" width="8" height="2" fill="var(--xp-bg-window)"/>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Desktop Area (main background for floating windows) -->
+    <div class="desktop-area">
+        <!-- Floating Windows for each resume section -->
+
+        <!-- Akram Saeed Main Window -->
+        <div id="akram-saeed-window" class="floating-window window-frame">
+            <div class="window-title-bar">
+                <span>Akram Saeed.exe</span>
+                <div class="window-controls">
+                    <button class="window-control-button float-minimize-btn" data-target="akram-saeed-window" data-taskbar-btn-id="taskbar-akram-saeed">_</button>
+                    <div class="window-control-button maximize-btn">□</div>
+                    <button class="window-control-button close-btn float-close-btn" data-target="akram-saeed-window" data-taskbar-btn-id="taskbar-akram-saeed">x</button>
+                </div>
+            </div>
+            <div class="window-content-inner text-center">
+                <header class="mb-8 pt-4">
+                    <h1 class="text-5xl sm:text-6xl lg:text-7xl font-black primary-heading tracking-tight mb-4">AKRAM SAEED</h1>
+                    <p class="text-md sm:text-lg text-[#555555] contact-info-p">
+                        <span class="contact-info-button">
+                            <a href="mailto:Contact.Akram.Saeed@gmail.com">CONTACT.AKRAM.SAEED@GMAIL.COM</a>
+                        </span>
+                        <span class="contact-info-button">
+                            NATIONALITY: ETHIOPIA
+                        </span>
+                    </p>
+                </header>
+
+                <!-- Pportrait.gif Section moved to top and simplified -->
+                <div class="mx-auto my-6 p-2 bg-gray-100 rounded-md border border-gray-300 shadow-md flex justify-center items-center overflow-hidden" style="max-width: 250px; height: auto;">
+                    <img src="WEB Portfolio/Pportrait.gif" alt="Akram Saeed Personal Portrait" class="w-full h-full object-contain">
+                </div>
+
+                <p class="text-lg text-[#36454F] pt-4">Welcome to my interactive resume!</p>
+                <p class="text-sm text-[#808080] mt-2">Click on the buttons in the left taskbar to open different sections.</p>
+            </div>
+        </div>
+
+        <!-- Summary Window -->
+        <div id="summary-window" class="floating-window window-frame">
+            <div class="window-title-bar window-title-bar-small">
+                <span>Summary.txt</span>
+                <div class="window-controls">
+                    <button class="window-control-button float-minimize-btn" data-target="summary-window" data-taskbar-btn-id="taskbar-summary">_</button>
+                    <div class="window-control-button maximize-btn">□</div>
+                    <button class="window-control-button close-btn float-close-btn" data-target="summary-window" data-taskbar-btn-id="taskbar-summary">x</button>
+                </div>
+            </div>
+            <div class="summary-content">
+                <h2 class="text-3xl sm:text-4xl font-extrabold section-header inline-block px-4 pb-2 -mt-4 mb-8">MANIFESTO</h2>
+                <p class="leading-relaxed text-xl lg:text-2xl text-[#36454F]">
+                    A <strong class="xp-highlight-script">Creative Technologist</strong> and <strong class="xp-highlight-script">Meta Visual Artist</strong>, dedicated to advancing the African Union’s vision for an integrated, prosperous, and peaceful Africa. I specialize in crafting impactful <strong style="color: var(--xp-border-darker);">multimedia content and digital communication assets</strong> that resonate with African citizens and elevate the AU brand, aligning directly with <strong style="color: var(--xp-border-darker);">Agenda 2063’s communication objectives</strong>. Empowering through innovation and visual storytelling.
+                </p>
+            </div>
+        </div>
+
+        <!-- Skills Window -->
+        <div id="skills-window" class="floating-window window-frame">
+            <div class="window-title-bar window-title-bar-small">
+                <span>Skills.dll</span>
+                <div class="window-controls">
+                    <button class="window-control-button float-minimize-btn" data-target="skills-window" data-taskbar-btn-id="taskbar-skills">_</button>
+                    <div class="window-control-button maximize-btn">□</div>
+                    <button class="window-control-button close-btn float-close-btn" data-target="skills-window" data-taskbar-btn-id="taskbar-skills">x</button>
+                </div>
+            </div>
+            <div class="window-content-inner">
+                <h2 class="text-3xl sm:text-4xl font-bold section-header">SYNAPTIC NODES</h2>
+                
+                <!-- Category Tabs/Buttons -->
+                <div class="skills-category-tabs">
+                    <button class="skills-category-tab-button active-tab" data-target-skills="cybernetic-skills">Technical Foundations</button>
+                    <button class="skills-category-tab-button" data-target-skills="aesthetic-skills">Creative & Multimedia</button>
+                </div>
+
+                <!-- Cybernetic Skills Content -->
+                <div id="cybernetic-skills" class="skills-content-section show-skills">
+                    <h3 class="sub-heading text-[#36454F] !text-base sm:!text-lg !mb-4">Technical Foundations & Digital Workflow</h3>
+                    <div class="flex flex-wrap -m-1">
+                        <span class="skill-tag">Hardware/Software Diagnostics</span>
+                        <span class="skill-tag">Network & System Integration</span>
+                        <span class="skill-tag">Google Technical Support Cert</span>
+                        <span class="skill-tag">N8N Automation</span>
+                        <span class="skill-tag">Proficiency in MERN Stack Development</span>
+                        <span class="skill-tag">Digital Asset Management</span>
+                        <span class="skill-tag">Secure Digital Workflow</span>
+                    </div>
+
+                    <h3 class="sub-heading text-[#36454F] !text-base sm:!text-lg !mb-4 mt-8">Software Expertise: System & Development</h3>
+                    <div class="flex flex-wrap -m-1">
+                        <span class="skill-tag">Windows OS (XP-11)</span>
+                        <span class="skill-tag">Linux (Ubuntu, Debian)</span>
+                        <span class="skill-tag">macOS</span>
+                        <span class="skill-tag">VirtualBox / VMware</span>
+                        <span class="skill-tag">Wireshark</span>
+                        <span class="skill-tag">Python (Scripting)</span>
+                        <span class="skill-tag">JavaScript / Node.js</span>
+                        <span class="skill-tag">React.js</span>
+                        <span class="skill-tag">Express.js</span>
+                        <span class="skill-tag">MongoDB</span>
+                        <span class="skill-tag">Git / GitHub</span>
+                        <span class="skill-tag">VS Code</span>
+                        <span class="skill-tag">Docker (Basic)</span>
+                        <span class="skill-tag">SQL (MySQL, PostgreSQL)</span>
+                        <span class="skill-tag">Microsoft Office Suite</span>
+                        <span class="skill-tag">Google Workspace</span>
+                        <span class="skill-tag">VLAN Configuration</span>
+                        <span class="skill-tag">IP Addressing (IPv4/IPv6)</span>
+                        <span class="skill-tag">Router/Switch Management</span>
+                        <span class="skill-tag">Altium Designer</span>
+                        <span class="skill-tag">PCB Design (for physical activations)</span>
+                    </div>
+                </div>
+
+                <!-- Algorithmic Aesthetic Skills Content (initially hidden) -->
+                <div id="aesthetic-skills" class="skills-content-section">
+                    <h3 class="sub-heading text-[#36454F] !text-base sm:!text-lg !mb-4">Creative & Multimedia Design</h3>
+                    <div class="flex flex-wrap -m-1">
+                        <span class="skill-tag">Game Design & Animation</span>
+                        <span class="skill-tag">Interactive Media</span>
+                        <span class="skill-tag">Adobe Creative Suite</span>
+                        <span class="skill-tag">UI/UX Design & Testing</span>
+                        <span class="skill-tag">3D Design & Modeling</span>
+                        <span class="skill-tag">Digital Printing & VisCom</span>
+                        <span class="skill-tag">Digital Marketing & SEO</span>
+                        <span class="skill-tag">Brand Communication Strategy</span>
+                        <span class="skill-tag">Art Direction</span>
+                        <span class="skill-tag">Copywriting for Communications</span>
+                        <span class="skill-tag">AI for Content Creation</span>
+                        <span class="skill-tag">Responsive Web Design</span>
+                        <span class="skill-tag">Editorial Design & DTP</span>
+                        <span class="skill-tag">Print Production & Color Mgmt.</span>
+                    </div>
+
+                    <h3 class="sub-heading text-[#36454F] !text-base sm:!text-lg !mb-4 mt-8">Software Expertise: Creative & Design</h3>
+                    <div class="flex flex-wrap -m-1">
+                        <span class="skill-tag">Adobe Photoshop</span>
+                        <span class="skill-tag">Adobe Illustrator</span>
+                        <span class="skill-tag">Adobe InDesign</span>
+                        <span class="skill-tag">Adobe Animate</span>
+                        <span class="skill-tag">Adobe Premiere Pro</span>
+                        <span class="skill-tag">Adobe After Effects</span>
+                        <span class="skill-tag">Adobe XD / Figma</span>
+                        <span class="skill-tag">Blender 3D</span>
+                        <span class="skill-tag">Maya (Autodesk)</span>
+                        <span class="skill-tag">3ds Max (Autodesk)</span>
+                        <span class="skill-tag">Unity Engine</span>
+                        <span class="skill-tag">Unreal Engine (Familiarity)</span>
+                        <span class="skill-tag">ZBrush</span>
+                        <span class="skill-tag">Substance Painter</span>
+                        <span class="skill-tag">AutoCAD (Autodesk)</span>
+                        <span class="skill-tag">SolidWorks</span>
+                        <span class="skill-tag">Fusion 360 (Autodesk)</span>
+                        <span class="skill-tag">Revit (Autodesk)</span>
+                        <span class="skill-tag">CorelDRAW</span>
+                        <span class="skill-tag">Canva</span>
+                        <span class="skill-tag">Wix / Squarespace</span>
+                        <span class="skill-tag">SEO Tools (Google Analytics, SEMrush)</span>
+                        <span class="skill-tag">CRM Software (e.g., Salesforce, Zoho)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Education Window -->
+        <div id="education-window" class="floating-window window-frame">
+            <div class="window-title-bar window-title-bar-small">
+                <span>Education.sys</span>
+                <div class="window-controls">
+                    <button class="window-control-button float-minimize-btn" data-target="education-window" data-taskbar-btn-id="taskbar-education">_</button>
+                    <div class="window-control-button maximize-btn">□</div>
+                    <button class="window-control-button close-btn float-close-btn" data-target="education-window" data-taskbar-btn-id="taskbar-education">x</button>
+                </div>
+            </div>
+            <div class="window-content-inner">
+                <h2 class="text-3xl sm:text-4xl font-bold section-header">KNOWLEDGE ARCHIVES</h2>
+                <div>
+                    <h3 class="sub-heading text-[#36454F]">Eastern Mediterranean University</h3>
+                    <p class="xp-data-field text-[#555555] text-sm italic">Famagusta, Cyprus | 2015 – 2023</p>
+                    <ul class="list-none text-[#36454F] text-lg space-y-1">
+                        <li class="list-item-deco"><strong>Current Major:</strong> Animation and Game Design</li>
+                        <li class="list-item-deco"><strong>Incomplete:</strong> 3 years of Mechatronics Engineering</li>
+                    </ul>
+                </div>
+                <div class="mt-8"> <!-- Added margin-top for separation -->
+                    <h3 class="sub-heading text-[#36454F]">Secondary Education</h3>
+                    <p class="xp-data-field text-[#555555] text-sm italic">Jeddah, Saudi Arabia</p>
+                    <ul class="list-none text-[#36454F] text-lg space-y-1">
+                        <li class="list-item-deco">Cambridge International Examinations (CIE) A-Levels</li>
+                        <li class="list-item-deco">Cambridge International Examinations (CIE) O-Levels</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Projects Window -->
+        <div id="projects-window" class="floating-window window-frame">
+            <div class="window-title-bar window-title-bar-small">
+                <span>Projects.dat</span>
+                <div class="window-controls">
+                    <button class="window-control-button float-minimize-btn" data-target="projects-window" data-taskbar-btn-id="taskbar-projects">_</button>
+                    <div class="window-control-button maximize-btn">□</div>
+                    <button class="window-control-button close-btn float-close-btn" data-target="projects-window" data-taskbar-btn-id="taskbar-projects">x</button>
+                </div>
+            </div>
+            <div class="window-content-inner">
+                <h2 class="text-3xl sm:text-4xl font-bold section-header">CREATIVE ITERATIONS & COLLABORATIONS</h2>
+                
+                <div class="project-accordion-container">
+                    <!-- Project SAVE'EH -->
+                    <div class="project-accordion-item">
+                        <button class="project-accordion-header" data-target="project-saveh-content">
+                            <span class="sub-heading text-[#36454F] !text-base sm:!text-lg !mb-0">Project SAVE'EH: Digital Identity & Communication</span>
+                            <span class="accordion-icon">+</span>
+                        </button>
+                        <div id="project-saveh-content" class="project-accordion-content">
+                            <p class="xp-data-field text-[#555555] text-sm italic">Fayda Digital ID Hackathon - Focusing on African Digital Sovereignty</p>
+                            <ul class="list-none text-[#36454F] text-sm space-y-2">
+                                <li class="list-item-deco">Developed a conceptual framework for a secure digital ecosystem, promoting data sovereignty and citizen empowerment.</li>
+                                <li class="list-item-deco">Researched and prototyped a secure digital identity verification system, highlighting secure communication practices.</li>
+                                <li class="list-item-deco">Presented the solution, emphasizing its potential impact on **Africa's digital future** and **effective public communication strategies**.</li>
+                                <li class="list-item-deco">Leveraged understanding of emerging technologies (blockchain, LLMs) for **innovative communication solutions**.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- VOIS Cyprus -->
+                    <div class="project-accordion-item">
+                        <button class="project-accordion-header" data-target="project-vois-content">
+                            <span class="sub-heading text-[#36454F] !text-base sm:!text-lg !mb-0">VOIS Cyprus: Awareness Film Production</span>
+                            <span class="accordion-icon">+</span>
+                        </button>
+                        <div id="project-vois-content" class="project-accordion-content">
+                            <p class="xp-data-field text-[#555555] text-sm italic">Short Film Production for Social Awareness & Advocacy</p>
+                            <ul class="list-none text-[#36454F] text-sm space-y-2">
+                                <li class="list-item-deco">Led a team in producing an impactful **awareness film** on student trafficking, demonstrating **audio-visual content creation** expertise.</li>
+                                <li class="list-item-deco">Managed all aspects of **video production**, including videography, editing (Premiere Pro, After Effects), and team coordination.</li>
+                                <li class="list-item-deco">Successfully screened the film at local events, contributing to **public awareness and communication objectives**.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- AISEC EMU -->
+                    <div class="project-accordion-item">
+                        <button class="project-accordion-header" data-target="project-aisec-content">
+                            <span class="sub-heading text-[#36454F] !text-base sm:!text-lg !mb-0">Lead Designer - AISEC EMU: Conservation Campaign</span>
+                            <span class="accordion-icon">+</span>
+                        </button>
+                        <div id="project-aisec-content" class="project-accordion-content">
+                            <p class="xp-data-field text-[#555555] text-sm italic">Visual Communication for Marine Conservation (Aligned with Sustainable Development)</p>
+                            <ul class="list-none text-[#36454F] text-sm space-y-2">
+                                <li class="list-item-deco">Volunteered as lead designer, creating compelling **visual assets and communication materials** for a marine conservation project.</li>
+                                <li class="list-item-deco">Designed engaging **infographics, social media campaigns**, and promotional materials using Adobe Creative Suite.</li>
+                                <li class="list-item-deco">Contributed to **public engagement** and environmental awareness through impactful design.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Dummy Project - REMOVE OR REPLACE with real content -->
+                    <div class="project-accordion-item">
+                        <button class="project-accordion-header" data-target="project-dummy-content">
+                            <span class="sub-heading text-[#36454F] !text-base sm:!text-lg !mb-0">[Placeholder: Replace with a New Project]</span>
+                            <span class="accordion-icon">+</span>
+                        </button>
+                        <div id="project-dummy-content" class="project-accordion-content">
+                            <p class="xp-data-field text-[#555555] text-sm italic">Consider a project demonstrating editorial design, print experience, or AI tools!</p>
+                            <ul class="list-none text-[#36454F] text-sm space-y-2">
+                                <li class="list-item-deco">This space is ideal for a project showcasing your editorial design skills, experience with print production, or a project where you specifically used AI tools for content generation or enhancement.</li>
+                                <li class="list-item-deco">Think about any work related to branding, advertising campaigns, or corporate communications for a large organization.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Work Experience Windows (now controlled by taskbar) -->
+        <div id="gobeze-window" class="floating-window window-frame">
+            <div class="window-title-bar window-title-bar-small">
+                <span class="flex-grow">Gobeze Consult.exe</span>
+                <div class="window-controls">
+                    <button class="window-control-button float-minimize-btn" data-target="gobeze-window" data-taskbar-btn-id="taskbar-gobeze">_</button>
+                    <div class="window-control-button maximize-btn">□</div>
+                    <button class="window-control-button close-btn float-close-btn" data-target="gobeze-window" data-taskbar-btn-id="taskbar-gobeze">x</button>
+                </div>
+            </div>
+            <div class="card-content">
+                <h3 class="sub-heading text-[#36454F]">Operations Lead & Digital Skills Trainer</h3>
+                <p class="xp-data-field text-[#555555] text-sm italic">Gobeze Consult</p>
+                <p class="xp-data-field text-[#808080] text-xs">Addis Ababa, Ethiopia | 2023 - Present</p>
+                <ul class="list-none text-[#36454F] text-sm space-y-2">
+                    <li class="list-item-deco">Oversaw multi-faceted consultancy operations, ensuring **project timelines and quality standards for communication deliverables** were met.</li>
+                    <li class="list-item-deco">Managed cross-functional teams to streamline workflows and improve efficiency in **digital content production**.</li>
+                    <li class="list-item-deco">Collaborated on strategic planning to expand company service offerings related to **digital presence and communication strategies**.</li>
+                    <li class="list-item-deco"><strong>Developed and delivered training programs in digital skills, including multimedia design tools and effective digital communication, raising awareness and empowering participants.</strong></li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="cssc-window" class="floating-window window-frame">
+            <div class="window-title-bar window-title-bar-small">
+                <span class="flex-grow">CSsC.exe</span>
+                <div class="window-controls">
+                    <button class="window-control-button float-minimize-btn" data-target="cssc-window" data-taskbar-btn-id="taskbar-cssc">_</button>
+                    <div class="window-control-button maximize-btn">□</div>
+                    <button class="window-control-button close-btn float-close-btn" data-target="cssc-window" data-taskbar-btn-id="taskbar-cssc">x</button>
+                </div>
+            </div>
+            <div class="card-content">
+                <h3 class="sub-heading text-[#36454F]">IT & Media Consultant</h3>
+                <p class="xp-data-field text-[#555555] text-sm italic">CSsC (Cyprus Student Services Consultancy)</p>
+                <p class="xp-data-field text-[#808080] text-xs">Cyprus | 2021 - 2023</p>
+                <ul class="list-none text-[#36454F] text-sm space-y-2">
+                    <li class="list-item-deco">Provided comprehensive IT support, including **hardware/software maintenance relevant to media workstations**, system installations, and troubleshooting.</li>
+                    <li class="list-item-deco">Managed **digital and physical marketing campaigns, from graphic design to content strategy**, utilizing Adobe Creative Suite.</li>
+                    <li class="list-item-deco">Streamlined digital contract preparation and management, improving **administrative efficiency in digital workflows**.</li>
+                    <li class="list-item-deco">Gained experience with **technical troubleshooting of graphic files** for various outputs.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="durmaz-window" class="floating-window window-frame">
+            <div class="window-title-bar window-title-bar-small">
+                <span class="flex-grow">Durmaz TechnoStore</span>
+                <div class="window-controls">
+                    <button class="window-control-button float-minimize-btn" data-target="durmaz-window" data-taskbar-btn-id="taskbar-durmaz">_</button>
+                    <div class="window-control-button maximize-btn">□</div>
+                    <button class="window-control-button close-btn float-close-btn" data-target="durmaz-window" data-taskbar-btn-id="taskbar-durmaz">x</button>
+                </div>
+            </div>
+            <div class="card-content">
+                <h3 class="sub-heading text-[#36454F]">Computer Technician</h3>
+                <p class="xp-data-field text-[#555555] text-sm italic">Durmaz TechnoStore</p>
+                <p class="xp-data-field text-[#808080] text-xs">Famagusta, Cyprus | 2018 - 2021</p>
+                <ul class="list-none text-[#36454F] text-sm space-y-2">
+                    <li class="list-item-deco">Specialized in hardware/software repairs for mobile phones and game consoles, enhancing technical diagnostic skills critical for **multimedia production environments**.</li>
+                    <li class="list-item-deco">Performed network line installations and system upgrades, understanding **digital infrastructure relevant to content delivery**.</li>
+                    <li class="list-item-deco">Provided technical support and front-desk consultation, communicating complex issues clearly – a key soft skill for **interdepartmental collaboration**.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Declaration Window -->
+        <div id="declaration-window" class="floating-window window-frame">
+            <div class="window-title-bar window-title-bar-small">
+                <span>Declaration.doc</span>
+                <div class="window-controls">
+                    <button class="window-control-button float-minimize-btn" data-target="declaration-window" data-taskbar-btn-id="taskbar-declaration">_</button>
+                    <div class="window-control-button maximize-btn">□</div>
+                    <button class="window-control-button close-btn float-close-btn" data-target="declaration-window" data-taskbar-btn-id="taskbar-declaration">x</button>
+                </div>
+            </div>
+            <div class="window-content-inner text-center">
+                <p class="text-[#808080] italic text-sm declaration-text">
+                    // DATA_INTEGRITY_CHECK: I affirm that the information provided herein is true and correct to the best of my knowledge. //
+                </p>
+            </div>
+        </div>
+
+        <!-- Artworks Window -->
+        <div id="artworks-window" class="floating-window window-frame">
+            <div class="window-title-bar window-title-bar-small">
+                <span>Creative Nexus.art</span>
+                <div class="window-controls">
+                    <button class="window-control-button float-minimize-btn" data-target="artworks-window" data-taskbar-btn-id="taskbar-creative-nexus">_</button>
+                    <div class="window-control-button maximize-btn">□</div>
+                    <button class="window-control-button close-btn float-close-btn" data-target="artworks-window" data-taskbar-btn-id="taskbar-creative-nexus">x</button>
+                </div>
+            </div>
+            <div class="window-content-inner">
+                <h2 class="text-3xl sm:text-4xl font-bold section-header">VISUAL CREATIONS</h2>
+                
+                <!-- Artworks Category Tabs/Buttons -->
+                <div class="skills-category-tabs" id="artworks-category-tabs">
+                    <button class="skills-category-tab-button active-tab" data-target-artworks="digital-art-grid">Digital Art</button>
+                    <button class="skills-category-tab-button" data-target-artworks="graphic-design-grid">Graphic Design</button>
+                    <button class="skills-category-tab-button" data-target-artworks="photography-grid">Photography</button>
+                    <button class="skills-category-tab-button" data-target-artworks="bw-art-grid">Black & White Art</button>
+                    <button class="skills-category-tab-button" data-target-artworks="charcoal-sketches-grid">Charcoal Sketches</button>
+                    <button class="skills-category-tab-button" data-target-artworks="video-art-grid">Video Art</button>
+                </div>
+
+                <!-- Digital Art Grid -->
+                <div id="digital-art-grid" class="artwork-grid show-artwork-category">
+                    <!-- Design Series Accordion Item -->
+                    <div class="project-accordion-item">
+                        <button class="project-accordion-header" data-target="digital-design-series-content">
+                            <span class="sub-heading text-[#36454F] !text-base sm:!text-lg !mb-0">Design Series</span>
+                            <span class="accordion-icon">+</span>
+                        </button>
+                        <div id="digital-design-series-content" class="project-accordion-content open">
+                            <div class="artwork-group grid grid-cols-fill-minmax-150 gap-4">
+                                <!-- Design folder D-series (5 images) -->
+                                <div class="artwork-card">
+                                    <img src="WEB Portfolio/Design/D1.png" alt="Design 1" />
+                                    <span class="artwork-title">Design 1</span>
+                                </div>
+                                <div class="artwork-card">
+                                    <img src="WEB Portfolio/Design/D2.5.png" alt="Design 2.5" />
+                                    <span class="artwork-title">Design 2.5</span>
+                                </div>
+                                <div class="artwork-card">
+                                    <img src="WEB Portfolio/Design/D2.png" alt="Design 2" />
+                                    <span class="artwork-title">Design 2</span>
+                                </div>
+                                <div class="artwork-card">
+                                    <img src="WEB Portfolio/Design/D3.png" alt="Design 3" />
+                                    <span class="artwork-title">Design 3</span>
+                                </div>
+                                <div class="artwork-card">
+                                    <img src="WEB Portfolio/Design/D4.png" alt="Design 4" />
+                                    <span class="artwork-title">Design 4</span>
+                                </div>
+                                <div class="artwork-card">
+                                    <img src="WEB Portfolio/Design/D5.png" alt="Design 5" />
+                                    <span class="artwork-title">Design 5</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Random Creations Accordion Item -->
+                    <div class="project-accordion-item mt-4">
+                        <button class="project-accordion-header" data-target="digital-random-creations-content">
+                            <span class="sub-heading text-[#36454F] !text-base sm:!text-lg !mb-0">Random Creations</span>
+                            <span class="accordion-icon">+</span>
+                        </button>
+                        <div id="digital-random-creations-content" class="project-accordion-content open">
+                            <div class="artwork-group grid grid-cols-fill-minmax-150 gap-4">
+                                <!-- Random folder JPGs (4 images) -->
+                                <div class="artwork-card">
+                                    <img src="WEB Portfolio/1.jpg" alt="Random Digital JPG 1" />
+                                    <span class="artwork-title">Random JPG 1</span>
+                                </div>
+                                <div class="artwork-card">
+                                    <img src="WEB Portfolio/2.jpg" alt="Random Digital JPG 2" />
+                                    <span class="artwork-title">Random JPG 2</span>
+                                </div>
+                                <div class="artwork-card">
+                                    <img src="WEB Portfolio/3.jpg" alt="Random Digital JPG 3" />
+                                    <span class="artwork-title">Random JPG 3</span>
+                                </div>
+                                <div class="artwork-card">
+                                    <img src="WEB Portfolio/4.jpg" alt="Random Digital JPG 4" />
+                                    <span class="artwork-title">Random JPG 4</span>
+                                </div>
+                                <!-- Random folder PNGs (8 images) -->
+                                <div class="artwork-card">
+                                    <img src="WEB Portfolio/1.png" alt="Random Digital PNG 1" />
+                                    <span class="artwork-title">Random PNG 1</span>
+                                </div>
+                                <div class="artwork-card">
+                                    <img src="WEB Portfolio/2.png" alt="Random Digital PNG 2" />
+                                    <span class="artwork-title">Random PNG 2</span>
+                                </div>
+                                <div class="artwork-card">
+                                    <img src="WEB Portfolio/3.PNG" alt="Random Digital PNG 3" />
+                                    <span class="artwork-title">Random PNG 3</span>
+                                </div>
+                                <div class="artwork-card">
+                                    <img src="WEB Portfolio/4.png" alt="Random Digital PNG 4" />
+                                    <span class="artwork-title">Random PNG 4</span>
+                                </div>
+                                <div class="artwork-card">
+                                    <img src="WEB Portfolio/5.png" alt="Random Digital PNG 5" />
+                                    <span class="artwork-title">Random PNG 5</span>
+                                </div>
+                                <div class="artwork-card">
+                                    <img src="WEB Portfolio/6.png" alt="Random Digital PNG 6" />
+                                    <span class="artwork-title">Random PNG 6</span>
+                                </div>
+                                <div class="artwork-card">
+                                    <img src="WEB Portfolio/7.png" alt="Random Digital PNG 7" />
+                                    <span class="artwork-title">Random PNG 7</span>
+                                </div>
+                                <div class="artwork-card">
+                                    <img src="WEB Portfolio/8.png" alt="Random Digital PNG 8" />
+                                    <span class="artwork-title">Random PNG 8</span>
+                                </div>
+                                <!-- Spirals/PNGs (newly discovered image type in Spirals folder) -->
+                                <div class="artwork-card">
+                                    <img src="WEB Portfolio/Spirals/11.png" alt="Spirals Image 11" />
+                                    <span class="artwork-title">Spirals 11</span>
+                                </div>
+                                <div class="artwork-card">
+                                    <img src="WEB Portfolio/Spirals/22.png" alt="Spirals Image 22" />
+                                    <span class="artwork-title">Spirals 22</span>
+                                </div>
+                                <div class="artwork-card">
+                                    <img src="WEB Portfolio/Spirals/33.png" alt="Spirals Image 33" />
+                                    <span class="artwork-title">Spirals 33</span>
+                                </div>
+                                <div class="artwork-card">
+                                    <img src="WEB Portfolio/Spirals/44.png" alt="Spirals Image 44" />
+                                    <span class="artwork-title">Spirals 44</span>
+                                </div>
+                                <div class="artwork-card">
+                                    <img src="WEB Portfolio/Spirals/55.png" alt="Spirals Image 55" />
+                                    <span class="artwork-title">Spirals 55</span>
+                                </div>
+                                <div class="artwork-card">
+                                    <img src="WEB Portfolio/Spirals/66.png" alt="Spirals Image 66" />
+                                    <span class="artwork-title">Spirals 66</span>
+                                </div>
+                                <div class="artwork-card">
+                                    <img src="WEB Portfolio/Spirals/77.png" alt="Spirals Image 77" />
+                                    <span class="artwork-title">Spirals 77</span>
+                                </div>
+                                <div class="artwork-card">
+                                    <img src="WEB Portfolio/Spirals/88.png" alt="Spirals Image 88" />
+                                    <span class="artwork-title">Spirals 88</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Graphic Design Grid -->
+                <div id="graphic-design-grid" class="artwork-grid">
+                    <h3 class="sub-heading text-[#36454F] !text-base sm:!text-lg !mb-4 !mt-0">Design Folder Assets</h3>
+                    <div class="flex flex-wrap -m-1 artwork-group">
+                        <!-- Design folder L-series & P-series (6 images) -->
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Design/L1.jpeg" alt="Logo Concept 1" />
+                            <span class="artwork-title">Logo Concept 1</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Design/L2.png" alt="Logo Concept 2" />
+                            <span class="artwork-title">Logo Concept 2</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Design/L3.jpeg" alt="Logo Concept 3" />
+                            <span class="artwork-title">Logo Concept 3</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Design/P1.png" alt="Poster Design 1" />
+                            <span class="artwork-title">Poster Design 1</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Design/P2.png" alt="Poster Design 2" />
+                            <span class="artwork-title">Poster Design 2</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Design/P3.jpg" alt="Poster Design 3" />
+                            <span class="artwork-title">Poster Design 3</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Photography Grid -->
+                <div id="photography-grid" class="artwork-grid">
+                    <h3 class="sub-heading text-[#36454F] !text-base sm:!text-lg !mb-4 !mt-0">Photography Portfolio</h3>
+                    <div class="flex flex-wrap -m-1 artwork-group">
+                        <!-- Photography folder (JPEG, JPG, PNG) -->
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Photography/AP1.jpg" alt="Photography AP1" />
+                            <span class="artwork-title">Photography AP1</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Photography/C1.jpeg" alt="Photography C1" />
+                            <span class="artwork-title">Photography C1</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Photography/C2.jpeg" alt="Photography C2" />
+                            <span class="artwork-title">Photography C2</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Photography/C44.JPG" alt="Photography C44" />
+                            <span class="artwork-title">Photography C44</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Photography/C5.png" alt="Photography C5" />
+                            <span class="artwork-title">Photography C5</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Photography/N0.jpeg" alt="Photography N0" />
+                            <span class="artwork-title">Photography N0</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Photography/N1.png" alt="Photography N1" />
+                            <span class="artwork-title">Photography N1</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Photography/N2.png" alt="Photography N2" />
+                            <span class="artwork-title">Photography N2</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Photography/O1.jpeg" alt="Photography O1" />
+                            <span class="artwork-title">Photography O1</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Photography/P0.jpg" alt="Photography P0" />
+                            <span class="artwork-title">Photography P0</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Photography/P1.JPG" alt="Photography P1" />
+                            <span class="artwork-title">Photography P1</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Photography/P2.JPG" alt="Photography P2" />
+                            <span class="artwork-title">Photography P2</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Photography/YN1.png" alt="Photography YN1" />
+                            <span class="artwork-title">Photography YN1</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Photography/YN2.png" alt="Photography YN2" />
+                            <span class="artwork-title">Photography YN2</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Photography/YN3.png" alt="Photography YN3" />
+                            <span class="artwork-title">Photography YN3</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Photography/YN4.png" alt="Photography YN4" />
+                            <span class="artwork-title">Photography YN4</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Photography/YN5.png" alt="Photography YN5" />
+                            <span class="artwork-title">Photography YN5</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Photography/YN6.png" alt="Photography YN6" />
+                            <span class="artwork-title">Photography YN6</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Photography/ZZz.jpg" alt="Photography ZZz" />
+                            <span class="artwork-title">Photography ZZz</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Photography/bla.JPG" alt="Photography Bla" />
+                            <span class="artwork-title">Photography Bla</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Photography/blaa.JPG" alt="Photography Blaa" />
+                            <span class="artwork-title">Photography Blaa</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Photography/blaaa.JPG" alt="Photography Blaaa" />
+                            <span class="artwork-title">Photography Blaaa</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Photography/blaaaa.JPG" alt="Photography Blaaaaa" />
+                            <span class="artwork-title">Photography Blaaaaa</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Photography/c3.jpeg" alt="Photography c3" />
+                            <span class="artwork-title">Photography c3</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Photography/p3.jpg" alt="Photography p3" />
+                            <span class="artwork-title">Photography p3</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Black & White Art Grid -->
+                <div id="bw-art-grid" class="artwork-grid">
+                    <h3 class="sub-heading text-[#36454F] !text-base sm:!text-lg !mb-4 !mt-0">Monochrome Works</h3>
+                    <div class="flex flex-wrap -m-1 artwork-group">
+                        <!-- Black and white art folder (4 images) -->
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/BW/BW1.jpg" alt="B&W Art 1" />
+                            <span class="artwork-title">B&W Art 1</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/BW/BW2.jpg" alt="B&W Art 2" />
+                            <span class="artwork-title">B&W Art 2</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/BW/BW3.jpg" alt="B&W Art 3" />
+                            <span class="artwork-title">B&W Art 3</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/BW/BW4.jpg" alt="B&W Art 4" />
+                            <span class="artwork-title">B&W Art 4</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charcoal Sketches Grid -->
+                <div id="charcoal-sketches-grid" class="artwork-grid">
+                    <h3 class="sub-heading text-[#36454F] !text-base sm:!text-lg !mb-4 !mt-0">Hand-Drawn Sketches</h3>
+                    <div class="flex flex-wrap -m-1 artwork-group">
+                        <!-- Charcoal Sketches folder (8 images) -->
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Sketches/S 0.jpeg" alt="Sketch 0" />
+                            <span class="artwork-title">Sketch 0</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Sketches/S 1.jpg" alt="Sketch 1" />
+                            <span class="artwork-title">Sketch 1</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Sketches/S 2.png" alt="Sketch 2" />
+                            <span class="artwork-title">Sketch 2</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Sketches/S 3.png" alt="Sketch 3" />
+                            <span class="artwork-title">Sketch 3</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Sketches/S 4.png" alt="Sketch 4" />
+                            <span class="artwork-title">Sketch 4</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Sketches/S 5.png" alt="Sketch 5" />
+                            <span class="artwork-title">Sketch 5</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Sketches/S 6.png" alt="Sketch 6" />
+                            <span class="artwork-title">Sketch 6</span>
+                        </div>
+                        <div class="artwork-card">
+                            <img src="WEB Portfolio/Sketches/S 7.png" alt="Sketch 7" />
+                            <span class="artwork-title">Sketch 7</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Video Art Grid -->
+                <div id="video-art-grid" class="artwork-grid">
+                    <h3 class="sub-heading text-[#36454F] !text-base sm:!text-lg !mb-4 !mt-0">Motion Graphics & Video</h3>
+                    <div class="flex flex-wrap -m-1 artwork-group">
+                        <!-- Spirals GIF (path updated) -->
+                        <div class="artwork-card" data-is-gif="true" data-video-src="WEB Portfolio/Spirals/Spirals.gif">
+                            <img src="WEB Portfolio/Spirals/Spirals.gif" alt="Spirals GIF" />
+                            <span class="artwork-title">Spirals GIF</span>
+                        </div>
+                        <!-- MP4 Videos from root -->
+                        <div class="artwork-card" data-video-src="WEB Portfolio/1.mp4">
+                            <img src="https://placehold.co/150x120/000000/FFFFFF?text=MP4+Video+1" alt="MP4 Video 1 Thumbnail" />
+                            <span class="artwork-title">MP4 Video 1</span>
+                        </div>
+                        <div class="artwork-card" data-video-src="WEB Portfolio/2.mp4">
+                            <img src="https://placehold.co/150x120/000000/FFFFFF?text=MP4+Video+2" alt="MP4 Video 2 Thumbnail" />
+                            <span class="artwork-title">MP4 Video 2</span>
+                        </div>
+                        <!-- Newly added MP4 video -->
+                        <div class="artwork-card" data-video-src="WEB Portfolio/2 2.mp4">
+                            <img src="https://placehold.co/150x120/000000/FFFFFF?text=MP4+Video+3" alt="MP4 Video 3 Thumbnail" />
+                            <span class="artwork-title">MP4 Video 3</span>
+                        </div>
+                        <!-- MP4 Videos from 'New folder' -->
+                        <div class="artwork-card" data-video-src="WEB Portfolio/New folder/matte painting quick preview.mp4">
+                            <img src="https://placehold.co/150x120/000000/FFFFFF?text=Matte+Preview" alt="Matte Painting Preview Thumbnail" />
+                            <span class="artwork-title">Matte Painting Preview</span>
+                        </div>
+                        <div class="artwork-card" data-video-src="WEB Portfolio/New folder/website template.mp4">
+                            <img src="https://placehold.co/150x120/000000/FFFFFF?text=Website+Template" alt="Website Template Video Thumbnail" />
+                            <span class="artwork-title">Website Template</span>
+                        </div>
+                        <!-- WMV Video (with note about compatibility) -->
+                        <div class="artwork-card" data-video-src="https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"> <!-- Placeholder MP4 for WMV -->
+                            <img src="https://placehold.co/150x120/808080/FFFFFF?text=WMV+Video+(Convert)" alt="WMV Video Thumbnail" />
+                            <span class="artwork-title">WMV (Convert to MP4)</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- New Artwork Viewer Window -->
+        <div id="artwork-viewer-window" class="floating-window window-frame" style="width: 700px; height: 500px;">
+            <div class="window-title-bar window-title-bar-small">
+                <span id="artwork-viewer-title">Viewer.exe</span>
+                <div class="window-controls">
+                    <button class="window-control-button float-minimize-btn" data-target="artwork-viewer-window" data-taskbar-btn-id="taskbar-creative-nexus">_</button>
+                    <div class="window-control-button maximize-btn">□</div>
+                    <button class="window-control-button close-btn float-close-btn" data-target="artwork-viewer-window" data-taskbar-btn-id="taskbar-creative-nexus">x</button>
+                </div>
+            </div>
+            <div class="window-content-inner artwork-viewer-content">
+                <!-- Content will be dynamically loaded here -->
+                <img id="artwork-viewer-img" class="hidden" src="" alt="Viewed Artwork">
+                <div id="artwork-viewer-svg-container" class="hidden" style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;"></div>
+                <video id="artwork-viewer-video" class="hidden" controls autoplay loop muted></video>
+            </div>
+        </div>
+
+    </div> <!-- End of Desktop Area -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const taskbarButtons = document.querySelectorAll('.taskbar-button');
+            const floatingWindows = document.querySelectorAll('.floating-window');
+            let zIndexCounter = 100; // Starting z-index for floating windows
+
+            // Function to show a window with transition
+            function showWindow(windowElement) {
+                windowElement.style.display = 'flex'; // Make it display first
+                setTimeout(() => { // Then apply transition properties after a micro-delay
+                    windowElement.classList.add('show');
+                }, 10); 
+            }
+
+            // Function to hide a window with transition
+            function hideWindow(windowElement) {
+                windowElement.classList.remove('show');
+                // Listen for the end of the transition, then set display to none
+                windowElement.addEventListener('transitionend', function handler() {
+                    // Only set display to 'none' if the 'show' class is genuinely removed
+                    if (!windowElement.classList.contains('show')) {
+                        windowElement.style.display = 'none';
+                    }
+                    window.removeEventListener('transitionend', handler); // Remove listener to prevent memory leaks
+                });
+            }
+
+            // Function to deactivate all taskbar buttons and hide all floating windows
+            function resetDesktop() {
+                taskbarButtons.forEach(btn => btn.classList.remove('active'));
+                floatingWindows.forEach(win => {
+                    hideWindow(win); // Use the new hide function
+                    win.style.zIndex = 100; // Reset z-index when hiding
+                });
+            }
+
+            // Initially show the "Akram Saeed.exe" window and set its taskbar button as active
+            resetDesktop(); 
+            showWindow(document.getElementById('akram-saeed-window'));
+            document.getElementById('taskbar-akram-saeed').classList.add('active');
+            document.getElementById('akram-saeed-window').style.zIndex = zIndexCounter++; 
+
+            // Handle taskbar button clicks
+            taskbarButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const windowId = button.dataset.windowId;
+                    const targetWindow = document.getElementById(windowId);
+
+                    // If the clicked window is already open, minimize it (toggle behavior)
+                    if (targetWindow.classList.contains('show')) {
+                        hideWindow(targetWindow); // Hide target
+                        button.classList.remove('active'); // Deactivate taskbar button
+                        
+                        // After minimizing, if no windows are now open, default to showing Akram Saeed window
+                        if (document.querySelectorAll('.floating-window.show').length === 0) {
+                            showWindow(document.getElementById('akram-saeed-window'));
+                            document.getElementById('taskbar-akram-saeed').classList.add('active');
+                            document.getElementById('akram-saeed-window').style.zIndex = zIndexCounter++;
+                        }
+                    } else {
+                        // Otherwise, hide all other windows and show the clicked one
+                        resetDesktop(); // Close all other windows
+                        showWindow(targetWindow); // Show target window
+                        targetWindow.style.zIndex = zIndexCounter++; // Bring to front
+                        button.classList.add('active'); // Activate taskbar button
+                    }
+                });
+            });
+
+            // Handle minimize button clicks inside floating windows
+            document.querySelectorAll('.float-minimize-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const windowId = button.dataset.target;
+                    const taskbarBtnId = button.dataset.taskbarBtnId;
+                    const targetWindow = document.getElementById(windowId);
+                    const taskbarButton = document.getElementById(taskbarBtnId);
+
+                    hideWindow(targetWindow); // Hide the floating window
+                    taskbarButton.classList.add('active'); // Keep taskbar button active (minimized state)
+                    
+                    // After minimizing, if no other windows are visible, show the main Akram Saeed window
+                    if (document.querySelectorAll('.floating-window.show').length === 0) {
+                        showWindow(document.getElementById('akram-saeed-window'));
+                        document.getElementById('taskbar-akram-saeed').classList.add('active');
+                        document.getElementById('akram-saeed-window').style.zIndex = zIndexCounter++;
+                    }
+                });
+            });
+
+            // Handle close button clicks inside floating windows
+            document.querySelectorAll('.float-close-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const windowId = button.dataset.target;
+                    const taskbarBtnId = button.dataset.taskbarBtnId; 
+                    const targetWindow = document.getElementById(windowId);
+                    const taskbarButton = document.getElementById(taskbarBtnId);
+
+                    hideWindow(targetWindow); // Hide the floating window
+                    taskbarButton.classList.remove('active'); // Deactivate taskbar button
+                    
+                    // After closing, if no other windows are visible, show the main Akram Saeed window
+                    if (document.querySelectorAll('.floating-window.show').length === 0) {
+                        showWindow(document.getElementById('akram-saeed-window'));
+                        document.getElementById('taskbar-akram-saeed').classList.add('active');
+                        document.getElementById('akram-saeed-window').style.zIndex = zIndexCounter++;
+                    }
+                });
+            });
+
+            // Bring window to front on click (desktop behavior)
+            floatingWindows.forEach(window => {
+                window.addEventListener('mousedown', () => {
+                    window.style.zIndex = zIndexCounter++;
+                });
+            });
+
+
+            // --- Skills Tab/Category Logic ---
+            const skillsCategoryButtons = document.querySelectorAll('.skills-category-tab-button');
+            const skillsContentSections = document.querySelectorAll('.skills-content-section');
+
+            // Function to show a specific skills content section
+            function showSkillsContent(targetId) {
+                skillsContentSections.forEach(section => {
+                    section.classList.remove('show-skills'); // Hide all sections
+                });
+                const targetSection = document.getElementById(targetId);
+                if (targetSection) { 
+                    targetSection.classList.add('show-skills'); // Show the target section
+                }
+            }
+
+            // Function to manage active tab button styling
+            function activateSkillsTabButton(activeButton) {
+                skillsCategoryButtons.forEach(btn => btn.classList.remove('active-tab')); // Deactivate all
+                activeButton.classList.add('active-tab'); // Activate the clicked one
+            } 
+
+            // Add event listeners to skills category buttons
+            skillsCategoryButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetId = button.dataset.targetSkills;
+                    showSkillsContent(targetId); // Show corresponding content
+                    activateSkillsTabButton(button); // Update active button style
+                });
+            });
+
+            // Initially show the first skills content section and activate its button
+            showSkillsContent('cybernetic-skills');
+            const initialSkillsButton = document.querySelector('[data-target-skills="cybernetic-skills"]');
+            if (initialSkillsButton) { 
+                initialSkillsButton.classList.add('active-tab');
+            }
+
+
+            // --- Projects Accordion Logic (and now Digital Art accordions) ---
+            // Select all accordion headers, including those in Digital Art grid
+            const allAccordionHeaders = document.querySelectorAll('.project-accordion-header');
+
+            allAccordionHeaders.forEach(header => {
+                header.addEventListener('click', () => {
+                    const targetId = header.dataset.target;
+                    const targetContent = document.getElementById(targetId);
+
+                    // If the clicked accordion is already open, close it
+                    if (header.classList.contains('active')) {
+                        header.classList.remove('active');
+                        if (targetContent) {
+                            targetContent.classList.remove('open');
+                        }
+                    } else {
+                        // For simplicity, we will allow multiple accordions to be open.
+                        // If you want only one open at a time, uncomment the block below.
+                        /*
+                        // Find the closest parent that contains other accordions to close (e.g., a specific grid or container)
+                        const parentContainer = header.closest('.artwork-grid, .project-accordion-container');
+                        if (parentContainer) {
+                            parentContainer.querySelectorAll('.project-accordion-header.active').forEach(otherHeader => {
+                                if (otherHeader !== header) {
+                                    otherHeader.classList.remove('active');
+                                    const otherContent = document.getElementById(otherHeader.dataset.target);
+                                    if (otherContent) {
+                                        otherContent.classList.remove('open');
+                                    }
+                                }
+                            });
+                        }
+                        */
+                        // Open the clicked accordion
+                        header.classList.add('active');
+                        if (targetContent) {
+                            targetContent.classList.add('open');
+                        }
+                    }
+                });
+            });
+
+
+            // --- Artwork Viewer Logic ---
+            const artworkViewerWindow = document.getElementById('artwork-viewer-window');
+            const artworkViewerImg = document.getElementById('artwork-viewer-img');
+            const artworkViewerSvgContainer = document.getElementById('artwork-viewer-svg-container');
+            const artworkViewerVideo = document.getElementById('artwork-viewer-video'); 
+            const artworkViewerTitle = document.getElementById('artwork-viewer-title');
+
+            // --- Artworks Category Tab Logic ---
+            const artworksCategoryButtons = document.querySelectorAll('#artworks-category-tabs .skills-category-tab-button');
+            const artworksContentSections = document.querySelectorAll('#artworks-window .artwork-grid'); 
+
+            // Function to show a specific artworks content section
+            function showArtworksCategoryContent(targetId) { 
+                artworksContentSections.forEach(section => {
+                    section.classList.remove('show-artwork-category'); 
+                });
+                const targetSection = document.getElementById(targetId);
+                if (targetSection) { 
+                    targetSection.classList.add('show-artwork-category'); 
+                }
+            }
+
+            // Function to manage active tab button styling for artworks
+            function activateArtworksTabButton(activeButton) { 
+                artworksCategoryButtons.forEach(btn => btn.classList.remove('active-tab')); 
+                activeButton.classList.add('active-tab'); 
+            }
+
+            // Add event listeners to artworks category buttons
+            artworksCategoryButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetId = button.dataset.targetArtworks;
+                    showArtworksCategoryContent(targetId); 
+                    activateArtworksTabButton(button); 
+                });
+            });
+
+            // Initially show the first artworks content section and activate its button
+            showArtworksCategoryContent('digital-art-grid');
+            const initialArtworksButton = document.querySelector('#artworks-category-tabs [data-target-artworks="digital-art-grid"]');
+            if (initialArtworksButton) { 
+                initialArtworksButton.classList.add('active-tab');
+            }
+            
+
+            // Re-select artwork cards AFTER categories are set up, to ensure we catch all
+            // We now use delegation to handle clicks for dynamically added or hidden content
+            document.getElementById('artworks-window').addEventListener('click', (event) => {
+                const card = event.target.closest('.artwork-card');
+                if (!card) return; // Not an artwork card
+
+                const artworkTitle = card.querySelector('.artwork-title')?.textContent || 'Untitled Artwork';
+                artworkViewerTitle.textContent = `${artworkTitle} - Viewer.exe`;
+
+                // Hide all potential display elements first and pause video
+                artworkViewerImg.classList.add('hidden');
+                artworkViewerSvgContainer.classList.add('hidden');
+                artworkViewerSvgContainer.innerHTML = ''; // Clear previous SVG
+                artworkViewerVideo.classList.add('hidden');
+                artworkViewerVideo.pause(); 
+
+                const imgElement = card.querySelector('img');
+                const svgElement = card.querySelector('svg');
+                const videoSrc = card.dataset.videoSrc; 
+                const isGif = card.dataset.isGif === 'true'; // Check if it's a GIF
+
+                if (videoSrc) {
+                    artworkViewerVideo.src = videoSrc;
+                    artworkViewerVideo.load(); 
+                    artworkViewerVideo.classList.remove('hidden');
+                    artworkViewerVideo.play(); 
+                } else if (isGif && imgElement) { // Handle GIFs explicitly
+                    artworkViewerImg.src = imgElement.src;
+                    artworkViewerImg.classList.remove('hidden');
+                } else if (imgElement && imgElement.src) {
+                    artworkViewerImg.src = imgElement.src;
+                    artworkViewerImg.classList.remove('hidden');
+                } else if (svgElement) {
+                    const clonedSvg = svgElement.cloneNode(true);
+                    artworkViewerSvgContainer.appendChild(clonedSvg);
+                    artworkViewerSvgContainer.classList.remove('hidden');
+                }
+                
+                showWindow(artworkViewerWindow);
+                artworkViewerWindow.style.zIndex = zIndexCounter++;
+            });
+        });
+    </script>
+</body>
+</html>
