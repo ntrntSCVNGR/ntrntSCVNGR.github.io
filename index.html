@@ -576,9 +576,23 @@
         }
 
         /* Styles for the new Artwork Viewer Window */
+        /* Make the viewer window nearly full screen and dynamically resizable */
+        #artwork-viewer-window {
+            top: 50% !important;
+            left: calc(50% + 90px) !important; /* Adjust left for taskbar, if needed */
+            transform: translate(-50%, -50%) !important;
+            width: calc(100vw - 200px) !important; /* Nearly full width, accounting for taskbar and margin */
+            height: calc(100vh - 60px) !important; /* Nearly full height with some top/bottom margin */
+            max-width: none !important; /* Remove max-width constraint */
+            max-height: none !important; /* Remove max-height constraint */
+            min-width: 320px !important; /* Ensure a sensible minimum */
+            min-height: 240px !important; /* Ensure a sensible minimum */
+        }
+
         .artwork-viewer-content {
             display: flex;
-            justify-content: center;
+            flex-direction: column; /* Stack media and description vertically */
+            justify-content: flex-start; /* Align content to the top */
             align-items: center;
             width: 100%;
             height: 100%;
@@ -586,13 +600,46 @@
             box-sizing: border-box;
         }
 
-        .artwork-viewer-content img, .artwork-viewer-content svg, .artwork-viewer-content video {
+        .artwork-viewer-media-wrapper {
+            position: relative;
+            width: 100%;
+            flex-grow: 1; /* Allow media wrapper to take available space */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-bottom: 1rem; /* Space before description */
+            min-height: 50%; /* Ensure it always takes at least half the vertical space */
+            max-height: 80%; /* Don't let it take too much if description is short */
+        }
+
+        .artwork-viewer-media-wrapper img,
+        .artwork-viewer-media-wrapper video,
+        .artwork-viewer-media-wrapper .artwork-viewer-svg-container {
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
             display: block;
             border: 1px solid var(--xp-border-darker);
             box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+            /* Ensure dynamic resizing */
+            width: auto;
+            height: auto;
+        }
+        /* Specific rule to make video take 100% width if needed for aspect ratio */
+        .artwork-viewer-media-wrapper video {
+             width: 100%;
+             height: auto;
+        }
+
+
+        .artwork-viewer-description-area {
+            width: 100%;
+            flex-shrink: 0; /* Prevent description from shrinking */
+            padding-top: 1rem;
+            border-top: 1px solid var(--xp-border-light);
+            overflow-y: auto; /* Allow scrolling for long descriptions */
+            text-align: center; /* Center align description text */
+            max-height: 30%; /* Limit height for description */
         }
 
         /* Responsive adjustments */
@@ -634,6 +681,13 @@
                 min-width: 300px;
                 min-height: 250px;
             }
+            /* Adjust full-screen viewer for mobile */
+            #artwork-viewer-window {
+                width: calc(100vw - 20px) !important; /* Account for smaller margins */
+                height: calc(100vh - 70px) !important; /* Account for taskbar and margins */
+                left: 50% !important; /* Re-center, no taskbar offset */
+            }
+
             .primary-heading {
                 font-size: 2.5rem;
                 letter-spacing: 0.1em;
@@ -696,8 +750,14 @@
             .artwork-card .artwork-title {
                 font-size: 0.7rem;
             }
-            .artwork-viewer-content {
-                padding: 0.5rem;
+            .artwork-viewer-media-wrapper {
+                height: 70%; /* Adjust for smaller screens */
+                padding-bottom: 0.5rem;
+            }
+            .artwork-viewer-description-area {
+                height: 30%; /* Adjust for smaller screens */
+                padding-top: 0.5rem;
+                font-size: 0.8rem;
             }
         }
     </style>
@@ -1182,29 +1242,29 @@
                         <div id="digital-design-series-content" class="project-accordion-content open">
                             <div class="artwork-group grid grid-cols-fill-minmax-150 gap-4">
                                 <!-- Design folder D-series (5 images) -->
-                                <div class="artwork-card">
-                                    <img src="WEB Portfolio/Design/D1.png" alt="Design 1" />
-                                    <span class="artwork-title">Design 1</span>
+                                <div class="artwork-card" data-description="A striking abstract digital design, exploring depth and contrast with geometric forms.">
+                                    <img src="WEB Portfolio/Design/D1.png" alt="Abstract Digital Design 1" />
+                                    <span class="artwork-title">Abstract Digital Design 1</span>
                                 </div>
-                                <div class="artwork-card">
-                                    <img src="WEB Portfolio/Design/D2.5.png" alt="Design 2.5" />
-                                    <span class="artwork-title">Design 2.5</span>
+                                <div class="artwork-card" data-description="Dynamic digital artwork using layered shapes and vibrant colors, focusing on visual movement.">
+                                    <img src="WEB Portfolio/Design/D2.5.png" alt="Dynamic Layered Art 2.5" />
+                                    <span class="artwork-title">Dynamic Layered Art 2.5</span>
                                 </div>
-                                <div class="artwork-card">
-                                    <img src="WEB Portfolio/Design/D2.png" alt="Design 2" />
-                                    <span class="artwork-title">Design 2</span>
+                                <div class="artwork-card" data-description="Digital composition featuring intricate patterns and a balanced color palette.">
+                                    <img src="WEB Portfolio/Design/D2.png" alt="Intricate Pattern Art 2" />
+                                    <span class="artwork-title">Intricate Pattern Art 2</span>
                                 </div>
-                                <div class="artwork-card">
-                                    <img src="WEB Portfolio/Design/D3.png" alt="Design 3" />
-                                    <span class="artwork-title">Design 3</span>
+                                <div class="artwork-card" data-description="A minimalist digital piece highlighting clean lines and subtle color shifts.">
+                                    <img src="WEB Portfolio/Design/D3.png" alt="Minimalist Digital Piece 3" />
+                                    <span class="artwork-title">Minimalist Digital Piece 3</span>
                                 </div>
-                                <div class="artwork-card">
-                                    <img src="WEB Portfolio/Design/D4.png" alt="Design 4" />
-                                    <span class="artwork-title">Design 4</span>
+                                <div class="artwork-card" data-description="Exploration of futuristic architectural elements within a digital landscape.">
+                                    <img src="WEB Portfolio/Design/D4.png" alt="Futuristic Architecture Study 4" />
+                                    <span class="artwork-title">Futuristic Architecture Study 4</span>
                                 </div>
-                                <div class="artwork-card">
-                                    <img src="WEB Portfolio/Design/D5.png" alt="Design 5" />
-                                    <span class="artwork-title">Design 5</span>
+                                <div class="artwork-card" data-description="A complex geometric abstraction, demonstrating depth perception and visual rhythm.">
+                                    <img src="WEB Portfolio/Design/D5.png" alt="Geometric Abstraction 5" />
+                                    <span class="artwork-title">Geometric Abstraction 5</span>
                                 </div>
                             </div>
                         </div>
@@ -1219,54 +1279,99 @@
                         <div id="digital-random-creations-content" class="project-accordion-content open">
                             <div class="artwork-group grid grid-cols-fill-minmax-150 gap-4">
                                 <!-- Random folder JPGs (4 images) -->
-                                <div class="artwork-card">
-                                    <img src="WEB Portfolio/1.jpg" alt="Random Digital JPG 1" />
-                                    <span class="artwork-title">Random JPG 1</span>
+                                <div class="artwork-card" data-description="A vibrant digital abstract exploring organic shapes and flowing lines.">
+                                    <img src="WEB Portfolio/1.jpg" alt="Vibrant Organic Abstract" />
+                                    <span class="artwork-title">Vibrant Organic Abstract</span>
                                 </div>
-                                <div class="artwork-card">
-                                    <img src="WEB Portfolio/2.jpg" alt="Random Digital JPG 2" />
-                                    <span class="artwork-title">Random JPG 2</span>
+                                <div class="artwork-card" data-description="Digital manipulation creating a surreal landscape with intricate details.">
+                                    <img src="WEB Portfolio/2.jpg" alt="Surreal Digital Landscape" />
+                                    <span class="artwork-title">Surreal Digital Landscape</span>
                                 </div>
-                                <div class="artwork-card">
-                                    <img src="WEB Portfolio/3.jpg" alt="Random Digital JPG 3" />
-                                    <span class="artwork-title">Random JPG 3</span>
+                                <div class="artwork-card" data-description="A bold, graphic composition using strong contrasts and sharp edges.">
+                                    <img src="WEB Portfolio/3.jpg" alt="Bold Graphic Composition" />
+                                    <span class="artwork-title">Bold Graphic Composition</span>
                                 </div>
-                                <div class="artwork-card">
-                                    <img src="WEB Portfolio/4.jpg" alt="Random Digital JPG 4" />
-                                    <span class="artwork-title">Random JPG 4</span>
+                                <div class="artwork-card" data-description="Soft, ethereal digital art with glowing elements and atmospheric depth.">
+                                    <img src="WEB Portfolio/4.jpg" alt="Ethereal Glow Art" />
+                                    <span class="artwork-title">Ethereal Glow Art</span>
                                 </div>
                                 <!-- Random folder PNGs (8 images) -->
-                                <div class="artwork-card">
-                                    <img src="WEB Portfolio/1.png" alt="Random Digital PNG 1" />
-                                    <span class="artwork-title">Random PNG 1</span>
+                                <div class="artwork-card" data-description="A layered PNG artwork showcasing depth through transparency and shadows.">
+                                    <img src="WEB Portfolio/1.png" alt="Layered Transparency Study" />
+                                    <span class="artwork-title">Layered Transparency Study</span>
                                 </div>
-                                <div class="artwork-card">
-                                    <img src="WEB Portfolio/2.png" alt="Random Digital PNG 2" />
-                                    <span class="artwork-title">Random PNG 2</span>
+                                <div class="artwork-card" data-description="Digital illustration featuring clean lines and a modern aesthetic.">
+                                    <img src="WEB Portfolio/2.png" alt="Modern Digital Illustration" />
+                                    <span class="artwork-title">Modern Digital Illustration</span>
                                 </div>
-                                <div class="artwork-card">
-                                    <img src="WEB Portfolio/3.PNG" alt="Random Digital PNG 3" />
-                                    <span class="artwork-title">Random PNG 3</span>
+                                <div class="artwork-card" data-description="A complex digital render, highlighting detailed textures and lighting.">
+                                    <img src="WEB Portfolio/3.PNG" alt="Detailed Digital Render" />
+                                    <span class="artwork-title">Detailed Digital Render</span>
                                 </div>
-                                <div class="artwork-card">
-                                    <img src="WEB Portfolio/4.png" alt="Random Digital PNG 4" />
-                                    <span class="artwork-title">Random PNG 4</span>
+                                <div class="artwork-card" data-description="Abstract art with geometric precision and a calm color scheme.">
+                                    <img src="WEB Portfolio/4.png" alt="Geometric Precision Abstract" />
+                                    <span class="artwork-title">Geometric Precision Abstract</span>
                                 </div>
-                                <div class="artwork-card">
-                                    <img src="WEB Portfolio/5.png" alt="Random Digital PNG 5" />
-                                    <span class="artwork-title">Random PNG 5</span>
+                                <div class="artwork-card" data-description="Digital painting of a vibrant cityscape at dusk, capturing urban light.">
+                                    <img src="WEB Portfolio/5.png" alt="Vibrant Cityscape Painting" />
+                                    <span class="artwork-title">Vibrant Cityscape Painting</span>
                                 </div>
-                                <div class="artwork-card">
-                                    <img src="WEB Portfolio/6.png" alt="Random Digital PNG 6" />
-                                    <span class="artwork-title">Random PNG 6</span>
+                                <div class="artwork-card" data-description="A playful character design, showcasing whimsical style and expressive features.">
+                                    <img src="WEB Portfolio/6.png" alt="Whimsical Character Design" />
+                                    <span class="artwork-title">Whimsical Character Design</span>
                                 </div>
-                                <div class="artwork-card">
-                                    <img src="WEB Portfolio/7.png" alt="Random Digital PNG 7" />
-                                    <span class="artwork-title">Random PNG 7</span>
+                                <div class="artwork-card" data-description="Digital art experimenting with shattered glass effects and dynamic composition.">
+                                    <img src="WEB Portfolio/7.png" alt="Shattered Glass Effect" />
+                                    <span class="artwork-title">Shattered Glass Effect</span>
                                 </div>
-                                <div class="artwork-card">
-                                    <img src="WEB Portfolio/8.png" alt="Random Digital PNG 8" />
-                                    <span class="artwork-title">Random PNG 8</span>
+                                <div class="artwork-card" data-description="Futuristic interface concept art, focusing on clean UI and information display.">
+                                    <img src="WEB Portfolio/8.png" alt="Futuristic UI Concept" />
+                                    <span class="artwork-title">Futuristic UI Concept</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Spirals Creations Accordion Item -->
+                    <div class="project-accordion-item mt-4">
+                        <button class="project-accordion-header" data-target="digital-spirals-content">
+                            <span class="sub-heading text-[#36454F] !text-base sm:!text-lg !mb-0">Spirals Series</span>
+                            <span class="accordion-icon">+</span>
+                        </button>
+                        <div id="digital-spirals-content" class="project-accordion-content open">
+                            <div class="artwork-group grid grid-cols-fill-minmax-150 gap-4">
+                                <!-- Spirals/PNGs -->
+                                <div class="artwork-card" data-description="Abstract spiral design with flowing motion and subtle gradient transitions.">
+                                    <img src="WEB Portfolio/Spirals/11.png" alt="Flowing Spiral Abstract 1" />
+                                    <span class="artwork-title">Flowing Spiral Abstract 1</span>
+                                </div>
+                                <div class="artwork-card" data-description="Hypnotic spiral art exploring radial symmetry and optical illusions.">
+                                    <img src="WEB Portfolio/Spirals/22.png" alt="Hypnotic Spiral Art 2" />
+                                    <span class="artwork-title">Hypnotic Spiral Art 2</span>
+                                </div>
+                                <div class="artwork-card" data-description="Geometric spiral with sharp edges and contrasting colors, creating depth.">
+                                    <img src="WEB Portfolio/Spirals/33.png" alt="Geometric Spiral Depth 3" />
+                                    <span class="artwork-title">Geometric Spiral Depth 3</span>
+                                </div>
+                                <div class="artwork-card" data-description="Organic spiral pattern resembling natural growth, with soft, muted tones.">
+                                    <img src="WEB Portfolio/Spirals/44.png" alt="Organic Growth Spiral 4" />
+                                    <span class="artwork-title">Organic Growth Spiral 4</span>
+                                </div>
+                                <div class="artwork-card" data-description="Vortex-like spiral design, evoking a sense of motion and energy.">
+                                    <img src="WEB Portfolio/Spirals/55.png" alt="Vortex Motion Spiral 5" />
+                                    <span class="artwork-title">Vortex Motion Spiral 5</span>
+                                </div>
+                                <div class="artwork-card" data-description="Intricate double spiral artwork, showcasing complex interweaving lines.">
+                                    <img src="WEB Portfolio/Spirals/66.png" alt="Intricate Double Spiral 6" />
+                                    <span class="artwork-title">Intricate Double Spiral 6</span>
+                                </div>
+                                <div class="artwork-card" data-description="Abstract radial design with a central focus and expanding concentric elements.">
+                                    <img src="WEB Portfolio/Spirals/77.png" alt="Radial Focus Spiral 7" />
+                                    <span class="artwork-title">Radial Focus Spiral 7</span>
+                                </div>
+                                <div class="artwork-card" data-description="Digital rendition of a classic golden ratio spiral, illustrating mathematical beauty.">
+                                    <img src="WEB Portfolio/Spirals/88.png" alt="Golden Ratio Spiral 8" />
+                                    <span class="artwork-title">Golden Ratio Spiral 8</span>
                                 </div>
                             </div>
                         </div>
@@ -1278,29 +1383,29 @@
                     <h3 class="sub-heading text-[#36454F] !text-base sm:!text-lg !mb-4 !mt-0">Design Folder Assets</h3>
                     <div class="flex flex-wrap -m-1 artwork-group">
                         <!-- Design folder L-series & P-series (6 images) -->
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Design/L1.jpeg" alt="Logo Concept 1" />
-                            <span class="artwork-title">Logo Concept 1</span>
+                        <div class="artwork-card" data-description="A minimalist logo concept emphasizing clean lines and brand identity.">
+                            <img src="WEB Portfolio/Design/L1.jpeg" alt="Minimalist Logo Concept 1" />
+                            <span class="artwork-title">Minimalist Logo Concept 1</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Design/L2.png" alt="Logo Concept 2" />
-                            <span class="artwork-title">Logo Concept 2</span>
+                        <div class="artwork-card" data-description="Modern logo design with geometric elements and a vibrant color scheme.">
+                            <img src="WEB Portfolio/Design/L2.png" alt="Modern Geometric Logo 2" />
+                            <span class="artwork-title">Modern Geometric Logo 2</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Design/L3.jpeg" alt="Logo Concept 3" />
-                            <span class="artwork-title">Logo Concept 3</span>
+                        <div class="artwork-card" data-description="Typography-focused logo, blending classic and contemporary styles.">
+                            <img src="WEB Portfolio/Design/L3.jpeg" alt="Typographic Logo Blend 3" />
+                            <span class="artwork-title">Typographic Logo Blend 3</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Design/P1.png" alt="Poster Design 1" />
-                            <span class="artwork-title">Poster Design 1</span>
+                        <div class="artwork-card" data-description="Promotional poster design for a music event, utilizing bold graphics and text.">
+                            <img src="WEB Portfolio/Design/P1.png" alt="Music Event Poster 1" />
+                            <span class="artwork-title">Music Event Poster 1</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Design/P2.png" alt="Poster Design 2" />
-                            <span class="artwork-title">Poster Design 2</span>
+                        <div class="artwork-card" data-description="Campaign poster advocating for environmental awareness, with strong visual messaging.">
+                            <img src="WEB Portfolio/Design/P2.png" alt="Environmental Campaign Poster 2" />
+                            <span class="artwork-title">Environmental Campaign Poster 2</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Design/P3.jpg" alt="Poster Design 3" />
-                            <span class="artwork-title">Poster Design 3</span>
+                        <div class="artwork-card" data-description="Artistic poster promoting a cultural festival, featuring diverse elements.">
+                            <img src="WEB Portfolio/Design/P3.jpg" alt="Cultural Festival Poster 3" />
+                            <span class="artwork-title">Cultural Festival Poster 3</span>
                         </div>
                     </div>
                 </div>
@@ -1310,105 +1415,105 @@
                     <h3 class="sub-heading text-[#36454F] !text-base sm:!text-lg !mb-4 !mt-0">Photography Portfolio</h3>
                     <div class="flex flex-wrap -m-1 artwork-group">
                         <!-- Photography folder (JPEG, JPG, PNG) -->
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Photography/AP1.jpg" alt="Photography AP1" />
-                            <span class="artwork-title">Photography AP1</span>
+                        <div class="artwork-card" data-description="A serene landscape captured at dawn, with soft light and natural textures.">
+                            <img src="WEB Portfolio/Photography/AP1.jpg" alt="Serene Dawn Landscape" />
+                            <span class="artwork-title">Serene Dawn Landscape</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Photography/C1.jpeg" alt="Photography C1" />
-                            <span class="artwork-title">Photography C1</span>
+                        <div class="artwork-card" data-description="Close-up portrait capturing subtle human emotions and intricate details.">
+                            <img src="WEB Portfolio/Photography/C1.jpeg" alt="Intimate Portrait Study 1" />
+                            <span class="artwork-title">Intimate Portrait Study 1</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Photography/C2.jpeg" alt="Photography C2" />
-                            <span class="artwork-title">Photography C2</span>
+                        <div class="artwork-card" data-description="Street photography capturing a candid moment in an urban setting.">
+                            <img src="WEB Portfolio/Photography/C2.jpeg" alt="Candid Urban Moment 2" />
+                            <span class="artwork-title">Candid Urban Moment 2</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Photography/C44.JPG" alt="Photography C44" />
-                            <span class="artwork-title">Photography C44</span>
+                        <div class="artwork-card" data-description="Vibrant cultural celebration, rich in colors and dynamic movement.">
+                            <img src="WEB Portfolio/Photography/C44.JPG" alt="Vibrant Cultural Celebration 4" />
+                            <span class="artwork-title">Vibrant Cultural Celebration 4</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Photography/C5.png" alt="Photography C5" />
-                            <span class="artwork-title">Photography C5</span>
+                        <div class="artwork-card" data-description="Architectural photography focusing on lines, shadows, and urban geometry.">
+                            <img src="WEB Portfolio/Photography/C5.png" alt="Urban Architecture Study 5" />
+                            <span class="artwork-title">Urban Architecture Study 5</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Photography/N0.jpeg" alt="Photography N0" />
-                            <span class="artwork-title">Photography N0</span>
+                        <div class="artwork-card" data-description="Nature photography, capturing the delicate beauty of a forest floor.">
+                            <img src="WEB Portfolio/Photography/N0.jpeg" alt="Forest Floor Detail" />
+                            <span class="artwork-title">Forest Floor Detail</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Photography/N1.png" alt="Photography N1" />
-                            <span class="artwork-title">Photography N1</span>
+                        <div class="artwork-card" data-description="Abstract nature shot, highlighting patterns found in natural elements.">
+                            <img src="WEB Portfolio/Photography/N1.png" alt="Abstract Nature Pattern" />
+                            <span class="artwork-title">Abstract Nature Pattern</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Photography/N2.png" alt="Photography N2" />
-                            <span class="artwork-title">Photography N2</span>
+                        <div class="artwork-card" data-description="Wildlife photography, capturing an animal in its natural habitat.">
+                            <img src="WEB Portfolio/Photography/N2.png" alt="Wildlife in Habitat" />
+                            <span class="artwork-title">Wildlife in Habitat</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Photography/O1.jpeg" alt="Photography O1" />
-                            <span class="artwork-title">Photography O1</span>
+                        <div class="artwork-card" data-description="Outdoor portrait with natural lighting, emphasizing subject's interaction with environment.">
+                            <img src="WEB Portfolio/Photography/O1.jpeg" alt="Outdoor Environmental Portrait" />
+                            <span class="artwork-title">Outdoor Environmental Portrait</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Photography/P0.jpg" alt="Photography P0" />
-                            <span class="artwork-title">Photography P0</span>
+                        <div class="artwork-card" data-description="A dramatic landscape shot, showcasing wide vistas and impressive skies.">
+                            <img src="WEB Portfolio/Photography/P0.jpg" alt="Dramatic Sky Landscape" />
+                            <span class="artwork-title">Dramatic Sky Landscape</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Photography/P1.JPG" alt="Photography P1" />
-                            <span class="artwork-title">Photography P1</span>
+                        <div class="artwork-card" data-description="Portraiture with a focus on studio lighting and classic composition.">
+                            <img src="WEB Portfolio/Photography/P1.JPG" alt="Studio Portrait Classic 1" />
+                            <span class="artwork-title">Studio Portrait Classic 1</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Photography/P2.JPG" alt="Photography P2" />
-                            <span class="artwork-title">Photography P2</span>
+                        <div class="artwork-card" data-description="Candid street portrait, capturing authenticity and urban character.">
+                            <img src="WEB Portfolio/Photography/P2.JPG" alt="Candid Street Portrait 2" />
+                            <span class="artwork-title">Candid Street Portrait 2</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Photography/YN1.png" alt="Photography YN1" />
-                            <span class="artwork-title">Photography YN1</span>
+                        <div class="artwork-card" data-description="Subtle light study in photography, playing with highlights and shadows.">
+                            <img src="WEB Portfolio/Photography/YN1.png" alt="Subtle Light Study YN1" />
+                            <span class="artwork-title">Subtle Light Study YN1</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Photography/YN2.png" alt="Photography YN2" />
-                            <span class="artwork-title">Photography YN2</span>
+                        <div class="artwork-card" data-description="Exploration of dynamic compositions in urban settings, capturing movement.">
+                            <img src="WEB Portfolio/Photography/YN2.png" alt="Dynamic Urban Composition YN2" />
+                            <span class="artwork-title">Dynamic Urban Composition YN2</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Photography/YN3.png" alt="Photography YN3" />
-                            <span class="artwork-title">Photography YN3</span>
+                        <div class="artwork-card" data-description="Nature's intricate details captured through macro photography.">
+                            <img src="WEB Portfolio/Photography/YN3.png" alt="Macro Nature Detail YN3" />
+                            <span class="artwork-title">Macro Nature Detail YN3</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Photography/YN4.png" alt="Photography YN4" />
-                            <span class="artwork-title">Photography YN4</span>
+                        <div class="artwork-card" data-description="An abstract view of everyday objects, re-imagined through photography.">
+                            <img src="WEB Portfolio/Photography/YN4.png" alt="Abstract Everyday Objects YN4" />
+                            <span class="artwork-title">Abstract Everyday Objects YN4</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Photography/YN5.png" alt="Photography YN5" />
-                            <span class="artwork-title">Photography YN5</span>
+                        <div class="artwork-card" data-description="Dramatic interplay of light and shadow in an interior architectural space.">
+                            <img src="WEB Portfolio/Photography/YN5.png" alt="Architectural Light Play YN5" />
+                            <span class="artwork-title">Architectural Light Play YN5</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Photography/YN6.png" alt="Photography YN6" />
-                            <span class="artwork-title">Photography YN6</span>
+                        <div class="artwork-card" data-description="Creative portraiture with experimental lighting and unique framing.">
+                            <img src="WEB Portfolio/Photography/YN6.png" alt="Experimental Portraiture YN6" />
+                            <span class="artwork-title">Experimental Portraiture YN6</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Photography/ZZz.jpg" alt="Photography ZZz" />
-                            <span class="artwork-title">Photography ZZz</span>
+                        <div class="artwork-card" data-description="Fine art photography focusing on texture and monochromatic tones.">
+                            <img src="WEB Portfolio/Photography/ZZz.jpg" alt="Monochromatic Texture Study" />
+                            <span class="artwork-title">Monochromatic Texture Study</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Photography/bla.JPG" alt="Photography Bla" />
-                            <span class="artwork-title">Photography Bla</span>
+                        <div class="artwork-card" data-description="Capturing the essence of a serene moment in everyday life.">
+                            <img src="WEB Portfolio/Photography/bla.JPG" alt="Serene Everyday Moment" />
+                            <span class="artwork-title">Serene Everyday Moment</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Photography/blaa.JPG" alt="Photography Blaa" />
-                            <span class="artwork-title">Photography Blaa</span>
+                        <div class="artwork-card" data-description="A vivid landscape image, showcasing vibrant colors and expansive views.">
+                            <img src="WEB Portfolio/Photography/blaa.JPG" alt="Vivid Landscape View" />
+                            <span class="artwork-title">Vivid Landscape View</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Photography/blaaa.JPG" alt="Photography Blaaa" />
-                            <span class="artwork-title">Photography Blaaa</span>
+                        <div class="artwork-card" data-description="Detailed close-up of a natural element, highlighting intricate patterns.">
+                            <img src="WEB Portfolio/Photography/blaaa.JPG" alt="Intricate Natural Patterns" />
+                            <span class="artwork-title">Intricate Natural Patterns</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Photography/blaaaa.JPG" alt="Photography Blaaaaa" />
-                            <span class="artwork-title">Photography Blaaaaa</span>
+                        <div class="artwork-card" data-description="Urban exploration photo, capturing forgotten spaces and street art.">
+                            <img src="WEB Portfolio/Photography/blaaaa.JPG" alt="Urban Exploration Art" />
+                            <span class="artwork-title">Urban Exploration Art</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Photography/c3.jpeg" alt="Photography c3" />
-                            <span class="artwork-title">Photography c3</span>
+                        <div class="artwork-card" data-description="Evocative portrait with deep shadows and strong contrast, conveying mood.">
+                            <img src="WEB Portfolio/Photography/c3.jpeg" alt="Evocative Contrast Portrait" />
+                            <span class="artwork-title">Evocative Contrast Portrait</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Photography/p3.jpg" alt="Photography p3" />
-                            <span class="artwork-title">Photography p3</span>
+                        <div class="artwork-card" data-description="Panoramic view of a cityscape at night, with blurred lights and motion.">
+                            <img src="WEB Portfolio/Photography/p3.jpg" alt="Night Cityscape Panorama" />
+                            <span class="artwork-title">Night Cityscape Panorama</span>
                         </div>
                     </div>
                 </div>
@@ -1418,21 +1523,21 @@
                     <h3 class="sub-heading text-[#36454F] !text-base sm:!text-lg !mb-4 !mt-0">Monochrome Works</h3>
                     <div class="flex flex-wrap -m-1 artwork-group">
                         <!-- Black and white art folder (4 images) -->
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/BW/BW1.jpg" alt="B&W Art 1" />
-                            <span class="artwork-title">B&W Art 1</span>
+                        <div class="artwork-card" data-description="High-contrast black and white photograph of an architectural detail.">
+                            <img src="WEB Portfolio/BW/BW1.jpg" alt="Architectural Contrast 1" />
+                            <span class="artwork-title">Architectural Contrast 1</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/BW/BW2.jpg" alt="B&W Art 2" />
-                            <span class="artwork-title">B&W Art 2</span>
+                        <div class="artwork-card" data-description="Monochromatic landscape capturing the stark beauty of nature.">
+                            <img src="WEB Portfolio/BW/BW2.jpg" alt="Stark Nature Landscape 2" />
+                            <span class="artwork-title">Stark Nature Landscape 2</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/BW/BW3.jpg" alt="B&W Art 3" />
-                            <span class="artwork-title">B&W Art 3</span>
+                        <div class="artwork-card" data-description="Dramatic black and white portrait, emphasizing texture and form.">
+                            <img src="WEB Portfolio/BW/BW3.jpg" alt="Dramatic B&W Portrait 3" />
+                            <span class="artwork-title">Dramatic B&W Portrait 3</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/BW/BW4.jpg" alt="B&W Art 4" />
-                            <span class="artwork-title">B&W Art 4</span>
+                        <div class="artwork-card" data-description="Abstract B&W composition, playing with light and shadow.">
+                            <img src="WEB Portfolio/BW/BW4.jpg" alt="Abstract Light & Shadow 4" />
+                            <span class="artwork-title">Abstract Light & Shadow 4</span>
                         </div>
                     </div>
                 </div>
@@ -1442,37 +1547,37 @@
                     <h3 class="sub-heading text-[#36454F] !text-base sm:!text-lg !mb-4 !mt-0">Hand-Drawn Sketches</h3>
                     <div class="flex flex-wrap -m-1 artwork-group">
                         <!-- Charcoal Sketches folder (8 images) -->
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Sketches/S 0.jpeg" alt="Sketch 0" />
-                            <span class="artwork-title">Sketch 0</span>
+                        <div class="artwork-card" data-description="Expressive charcoal sketch of a human figure, capturing movement.">
+                            <img src="WEB Portfolio/Sketches/S%200.jpeg" alt="Dynamic Figure Sketch 0" />
+                            <span class="artwork-title">Dynamic Figure Sketch 0</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Sketches/S 1.jpg" alt="Sketch 1" />
-                            <span class="artwork-title">Sketch 1</span>
+                        <div class="artwork-card" data-description="Detailed charcoal portrait, focusing on subtle facial expressions.">
+                            <img src="WEB Portfolio/Sketches/S%201.jpg" alt="Detailed Charcoal Portrait 1" />
+                            <span class="artwork-title">Detailed Charcoal Portrait 1</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Sketches/S 2.png" alt="Sketch 2" />
-                            <span class="artwork-title">Sketch 2</span>
+                        <div class="artwork-card" data-description="Architectural study in charcoal, exploring perspective and depth.">
+                            <img src="WEB Portfolio/Sketches/S%202.png" alt="Architectural Charcoal Study 2" />
+                            <span class="artwork-title">Architectural Charcoal Study 2</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Sketches/S 3.png" alt="Sketch 3" />
-                            <span class="artwork-title">Sketch 3</span>
+                        <div class="artwork-card" data-description="Abstract charcoal art, using texture and form to create a mood.">
+                            <img src="WEB Portfolio/Sketches/S%203.png" alt="Abstract Textured Charcoal 3" />
+                            <span class="artwork-title">Abstract Textured Charcoal 3</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Sketches/S 4.png" alt="Sketch 4" />
-                            <span class="artwork-title">Sketch 4</span>
+                        <div class="artwork-card" data-description="Still life charcoal drawing, emphasizing light and shadow play.">
+                            <img src="WEB Portfolio/Sketches/S%204.png" alt="Still Life Charcoal Study 4" />
+                            <span class="artwork-title">Still Life Charcoal Study 4</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Sketches/S 5.png" alt="Sketch 5" />
-                            <span class="artwork-title">Sketch 5</span>
+                        <div class="artwork-card" data-description="Landscape sketch in charcoal, capturing the essence of a natural scene.">
+                            <img src="WEB Portfolio/Sketches/S%205.png" alt="Landscape Charcoal Sketch 5" />
+                            <span class="artwork-title">Landscape Charcoal Sketch 5</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Sketches/S 6.png" alt="Sketch 6" />
-                            <span class="artwork-title">Sketch 6</span>
+                        <div class="artwork-card" data-description="Animal study in charcoal, highlighting fur texture and anatomical structure.">
+                            <img src="WEB Portfolio/Sketches/S%206.png" alt="Animal Charcoal Study 6" />
+                            <span class="artwork-title">Animal Charcoal Study 6</span>
                         </div>
-                        <div class="artwork-card">
-                            <img src="WEB Portfolio/Sketches/S 7.png" alt="Sketch 7" />
-                            <span class="artwork-title">Sketch 7</span>
+                        <div class="artwork-card" data-description="Expressive charcoal drawing, conveying intense emotions through gesture.">
+                            <img src="WEB Portfolio/Sketches/S%207.png" alt="Expressive Gesture Drawing 7" />
+                            <span class="artwork-title">Expressive Gesture Drawing 7</span>
                         </div>
                     </div>
                 </div>
@@ -1482,36 +1587,36 @@
                     <h3 class="sub-heading text-[#36454F] !text-base sm:!text-lg !mb-4 !mt-0">Motion Graphics & Video</h3>
                     <div class="flex flex-wrap -m-1 artwork-group">
                         <!-- Spirals GIF (path updated) -->
-                        <div class="artwork-card" data-is-gif="true" data-video-src="WEB Portfolio/Spirals/Spirals.gif">
-                            <img src="WEB Portfolio/Spirals/Spirals.gif" alt="Spirals GIF" />
-                            <span class="artwork-title">Spirals GIF</span>
+                        <div class="artwork-card" data-is-gif="true" data-video-src="WEB%20Portfolio/Spirals/Spirals.gif" data-description="A mesmerizing animated GIF showcasing dynamic spiral patterns.">
+                            <img src="WEB Portfolio/Spirals/Spirals.gif" alt="Dynamic Spiral GIF" />
+                            <span class="artwork-title">Dynamic Spiral GIF</span>
                         </div>
                         <!-- MP4 Videos from root -->
-                        <div class="artwork-card" data-video-src="WEB Portfolio/1.mp4">
-                            <img src="https://placehold.co/150x120/000000/FFFFFF?text=MP4+Video+1" alt="MP4 Video 1 Thumbnail" />
-                            <span class="artwork-title">MP4 Video 1</span>
+                        <div class="artwork-card" data-video-src="WEB%20Portfolio/1.mp4" data-description="Short motion graphics piece demonstrating abstract visual effects.">
+                            <img src="https://placehold.co/150x120/000000/FFFFFF?text=MP4+Video+1" alt="Abstract Motion Graphics 1 Thumbnail" />
+                            <span class="artwork-title">Abstract Motion Graphics 1</span>
                         </div>
-                        <div class="artwork-card" data-video-src="WEB Portfolio/2.mp4">
-                            <img src="https://placehold.co/150x120/000000/FFFFFF?text=MP4+Video+2" alt="MP4 Video 2 Thumbnail" />
-                            <span class="artwork-title">MP4 Video 2</span>
+                        <div class="artwork-card" data-video-src="WEB%20Portfolio/2.mp4" data-description="Experimental video art exploring digital glitches and vibrant color shifts.">
+                            <img src="https://placehold.co/150x120/000000/FFFFFF?text=MP4+Video+2" alt="Experimental Glitch Art 2 Thumbnail" />
+                            <span class="artwork-title">Experimental Glitch Art 2</span>
                         </div>
                         <!-- Newly added MP4 video -->
-                        <div class="artwork-card" data-video-src="WEB Portfolio/2%202.mp4">
-                            <img src="https://placehold.co/150x120/000000/FFFFFF?text=MP4+Video+3" alt="MP4 Video 3 Thumbnail" />
-                            <span class="artwork-title">MP4 Video 3</span>
+                        <div class="artwork-card" data-video-src="WEB%20Portfolio/2%202.mp4" data-description="A concise video showcasing a modern UI animation concept.">
+                            <img src="https://placehold.co/150x120/000000/FFFFFF?text=MP4+Video+3" alt="UI Animation Concept 3 Thumbnail" />
+                            <span class="artwork-title">UI Animation Concept 3</span>
                         </div>
                         <!-- MP4 Videos from 'New folder' -->
-                        <div class="artwork-card" data-video-src="WEB%20Portfolio/New%20folder/matte%20painting%20quick%20preview.mp4">
+                        <div class="artwork-card" data-video-src="WEB%20Portfolio/New%20folder/matte%20painting%20quick%20preview.mp4" data-description="A quick preview of a digital matte painting process, demonstrating environmental art skills.">
                             <img src="https://placehold.co/150x120/000000/FFFFFF?text=Matte+Preview" alt="Matte Painting Preview Thumbnail" />
                             <span class="artwork-title">Matte Painting Preview</span>
                         </div>
-                        <div class="artwork-card" data-video-src="WEB%20Portfolio/New%20folder/website%20template.mp4">
+                        <div class="artwork-card" data-video-src="WEB%20Portfolio/New%20folder/website%20template.mp4" data-description="A video walkthrough of a custom-designed website template, highlighting user experience.">
                             <img src="https://placehold.co/150x120/000000/FFFFFF?text=Website+Template" alt="Website Template Video Thumbnail" />
-                            <span class="artwork-title">Website Template</span>
+                            <span class="artwork-title">Website Template Walkthrough</span>
                         </div>
                         <!-- WMV Video (with note about compatibility) -->
-                        <div class="artwork-card" data-video-src="https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"> <!-- Placeholder MP4 for WMV -->
-                            <img src="https://placehold.co/150x120/808080/FFFFFF?text=WMV+Video+(Convert)" alt="WMV Video Thumbnail" />
+                        <div class="artwork-card" data-video-src="https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4" data-description="Placeholder for a WMV video (requires conversion to MP4 for web compatibility).">
+                            <img src="https://placehold.co/150x120/808080/FFFFFF?text=WMV+Video+(Convert)" alt="WMV Video Placeholder Thumbnail" />
                             <span class="artwork-title">WMV (Convert to MP4)</span>
                         </div>
                     </div>
@@ -1521,7 +1626,7 @@
         </div>
 
         <!-- New Artwork Viewer Window -->
-        <div id="artwork-viewer-window" class="floating-window window-frame" style="width: 700px; height: 500px;">
+        <div id="artwork-viewer-window" class="floating-window window-frame">
             <div class="window-title-bar window-title-bar-small">
                 <span id="artwork-viewer-title">Viewer.exe</span>
                 <div class="window-controls">
@@ -1530,11 +1635,17 @@
                     <button class="window-control-button close-btn float-close-btn" data-target="artwork-viewer-window" data-taskbar-btn-id="taskbar-creative-nexus">x</button>
                 </div>
             </div>
-            <div class="window-content-inner artwork-viewer-content">
-                <!-- Content will be dynamically loaded here -->
-                <img id="artwork-viewer-img" class="hidden" src="" alt="Viewed Artwork">
-                <div id="artwork-viewer-svg-container" class="hidden" style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;"></div>
-                <video id="artwork-viewer-video" class="hidden" controls autoplay loop muted></video>
+            <div class="window-content-inner flex flex-col items-center">
+                <div class="artwork-viewer-media-wrapper">
+                    <!-- Media elements here -->
+                    <img id="artwork-viewer-img" class="hidden" src="" alt="Viewed Artwork">
+                    <div id="artwork-viewer-svg-container" class="hidden artwork-viewer-svg-container"></div>
+                    <video id="artwork-viewer-video" class="hidden" controls autoplay loop muted></video>
+                </div>
+                <div class="artwork-viewer-description-area">
+                    <h3 id="artwork-viewer-media-title" class="sub-heading !text-lg !mb-2"></h3>
+                    <p id="artwork-viewer-media-description" class="text-sm text-[#555555]"></p>
+                </div>
             </div>
         </div>
 
@@ -1744,6 +1855,8 @@
             const artworkViewerSvgContainer = document.getElementById('artwork-viewer-svg-container');
             const artworkViewerVideo = document.getElementById('artwork-viewer-video'); 
             const artworkViewerTitle = document.getElementById('artwork-viewer-title');
+            const artworkViewerMediaTitle = document.getElementById('artwork-viewer-media-title'); // New element
+            const artworkViewerMediaDescription = document.getElementById('artwork-viewer-media-description'); // New element
 
             // --- Artworks Category Tab Logic ---
             const artworksCategoryButtons = document.querySelectorAll('#artworks-category-tabs .skills-category-tab-button');
@@ -1790,7 +1903,11 @@
                 if (!card) return; // Not an artwork card
 
                 const artworkTitle = card.querySelector('.artwork-title')?.textContent || 'Untitled Artwork';
+                const artworkDescription = card.dataset.description || 'No description available.';
+
                 artworkViewerTitle.textContent = `${artworkTitle} - Viewer.exe`;
+                artworkViewerMediaTitle.textContent = artworkTitle; // Update media title
+                artworkViewerMediaDescription.textContent = artworkDescription; // Update media description
 
                 // Hide all potential display elements first and pause video
                 artworkViewerImg.classList.add('hidden');
@@ -1798,24 +1915,25 @@
                 artworkViewerSvgContainer.innerHTML = ''; // Clear previous SVG
                 artworkViewerVideo.classList.add('hidden');
                 artworkViewerVideo.pause(); 
+                artworkViewerVideo.currentTime = 0; // Reset video to start
 
                 const imgElement = card.querySelector('img');
                 const svgElement = card.querySelector('svg');
                 const videoSrc = card.dataset.videoSrc; 
                 const isGif = card.dataset.isGif === 'true'; // Check if it's a GIF
 
-                if (videoSrc) {
+                if (videoSrc && !isGif) { // Only play video if it's explicitly a video and not a GIF
                     artworkViewerVideo.src = videoSrc;
                     artworkViewerVideo.load(); 
                     artworkViewerVideo.classList.remove('hidden');
                     artworkViewerVideo.play(); 
-                } else if (isGif && imgElement) { // Handle GIFs explicitly
+                } else if (isGif && imgElement) { // Handle GIFs explicitly via img tag
                     artworkViewerImg.src = imgElement.src;
                     artworkViewerImg.classList.remove('hidden');
-                } else if (imgElement && imgElement.src) {
+                } else if (imgElement && imgElement.src) { // Standard images
                     artworkViewerImg.src = imgElement.src;
                     artworkViewerImg.classList.remove('hidden');
-                } else if (svgElement) {
+                } else if (svgElement) { // SVG content (if any)
                     const clonedSvg = svgElement.cloneNode(true);
                     artworkViewerSvgContainer.appendChild(clonedSvg);
                     artworkViewerSvgContainer.classList.remove('hidden');
